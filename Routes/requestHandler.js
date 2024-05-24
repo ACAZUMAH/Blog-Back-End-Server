@@ -14,7 +14,9 @@ const {
     likes,
     unfollow,
     updatePost,
-    updatepart } = require('./router')
+    updatepart,
+    deletePost,
+    unlikePost } = require('./router')
 /*function parseUrl(url){
     return new URL(url)
 }
@@ -106,7 +108,7 @@ function handlePutRequest(req,res){
     let post_Id
     let username
     //endpoint for updating a post
-    if(pathname.match(/\/blog\/update\?username=([0-9a-zA-Z]+)\&post_Id=([0-9a-fA-F-]+)$/)){
+    if(pathname.match(/\/blog\/update\?username=([0-9a-zA-Z]+)&post_Id=([0-9a-fA-F-]+)$/)){
         const queryparam = querystring.parse(pathname.split('?')[1])
         post_Id = queryparam.post_Id
         username = queryparam.username
@@ -119,7 +121,7 @@ function handlePatchRequest(req,res){
     let post_Id
     let username
     //enndpoint for patching a post
-    if(pathname.match(/\/blog\/update\?username=([0-9a-zA-Z]+)\&post_Id=([0-9a-fA-F-]+)$/)){
+    if(pathname.match(/\/blog\/update\?username=([0-9a-zA-Z]+)&post_Id=([0-9a-fA-F-]+)$/)){
         const queryparam = querystring.parse(pathname.split('?')[1])
         post_Id = queryparam.post_Id
         username = queryparam.username
@@ -130,11 +132,24 @@ function handlePatchRequest(req,res){
 function handleDeleteRequest(req,res){
     const pathname = req.url
     let username 
-    if(pathname.match(/blog\/unfollow\?username=([0-9a-zA-Z]+)\&unfollow=(([0-9a-zA-Z]+))/)){
+    let post_Id 
+    if(pathname.match(/blog\/unfollow\?username=([0-9a-zA-Z]+)&unfollow=(([0-9a-zA-Z]+))/)){
         const queryparam = querystring.parse(pathname.split('?')[1])
         username = queryparam.username
         const tounfollow = queryparam.unfollow 
         return unfollow(req,res,username,tounfollow)
+    // endpoint for deleting a post
+    }else if(pathname.match(/\/blog\/delete-post\?username=([0-9a-z-A-Z]+)&post_Id=([0-9a-fA-F-]+)$/)){
+        const queryparam = querystring.parse(pathname.split('?')[1])
+        username = queryparam.username
+        post_Id = queryparam.post_Id
+        return deletePost(req,res,username,post_Id)
+    //endpoint for unliking a post
+    }else if(pathname.match(/\/blog\/unlike\?username=([0-9a-z-A-Z]+)&post_Id=([0-9a-fA-F-]+)$/)){
+        const queryparam = querystring.parse(pathname.split('?')[1])
+        username = queryparam.username
+        post_Id = queryparam.post_Id
+        return unlikePost(req,res,username,post_Id)
     }else{
         res.writeHead(400,{ "content-type": "application/json"})
         res.end(JSON.stringify({"Bad Request": "unrecognized request path"}))

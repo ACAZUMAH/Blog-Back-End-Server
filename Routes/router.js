@@ -311,6 +311,36 @@ async function updatepart(req,res,username,post_Id){
         res.end(JSON.stringify({"message": error}))
     }
 }
+async function deletePost(req,res,username,post_Id){
+    try {
+        const deletePostData = await dbcontrol.removePostData(username,post_Id)
+        if(deletePostData === 'Post deleted'){
+            res.writeHead(200,{"content-type": "application/json"})
+            res.end(JSON.stringify({"message": deletePostData}))
+        }
+    } catch (error) {
+        res.writeHead(404,{"content-type": "application/json"})
+        res.end(JSON.stringify({"message": error}))
+    }
+}
+async function unlikePost(req,res,username,post_Id){
+    try {
+        const unlike = await dbcontrol.removeLike(username,post_Id)
+        if(unlike === 'true'){
+            const post = await Post(post_Id)
+            const likesforpost = await returnLikes(post_Id)
+            res.writeHead(200, {"content-type": "application/json"})
+            res.write(JSON.stringify(post))
+            res.end(JSON.stringify(likesforpost))
+        }else{
+            res.writeHead(404, {"content-type": "application/json"})
+            res.end(JSON.stringify({"message": unlike}))
+        }
+    } catch (error) {
+       res.writeHead(404, {"content-type": "application/json"})
+        res.end(JSON.stringify({"message": error}))
+    }
+}
 module.exports = { 
     handleAccountCreation,
     returnProfileInfo,
@@ -326,5 +356,7 @@ module.exports = {
     likes,
     unfollow,
     updatePost,
-    updatepart
+    updatepart,
+    deletePost,
+    unlikePost
 }

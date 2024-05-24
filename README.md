@@ -118,10 +118,18 @@ This project provides the back-end infrastructure for a blog platform where user
       ```json
       {
         "title": "post title",
-        "body": "post body",
-        "summary": "post summary" 
+        "body": "post body" 
       }
       ```
+    
+  - **Delete a Post**:
+    - Enpoint: DELETE /blog/delete-post?username={username}&post_Id={post_Id}
+
+  - **Like a Post**:
+    - EndPoint: POST /blog/like?username={username}&post_Id={post_Id}
+  
+  - **Unlike a Post**:
+    - EndPoint: DELETE /blog/unlike?username={username}&post_Id={post_Id}
 
 
 ### Follow Management

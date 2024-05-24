@@ -443,31 +443,60 @@ function storeUpdatedPost(post_Id:string,title:string,body:string,summary:string
         }
     })
 }
-/*
-async function test(){
-    /*await getPostDataStored('bugs','bugs are dirty','fuck',13).then((succ)=>{
-        console.log(succ)
-    }).catch((rej)=>{
-        console.log(rej)
+function removePostedData(username:string,post_Id:string){
+    return new Promise(async (resolve,reject)=>{
+        try {
+            const userId: userid[] = await get_ids(username)
+            if(userId && userId.length > 0 && userId[0].user_Id !== undefined){
+                const query = `DELETE FROM post WHERE post_Id = ? AND user_Id = ?`
+                const values = [post_Id, userId[0].user_Id]
+                setTimeout(()=>{
+                    con.query(query,values, (error:any, results:any)=>{
+                        if(error){
+                            console.log(error)
+                        }
+                        if(results.affectedRows > 0){
+                            resolve('true')
+                        }else{
+                            reject('false')
+                        }
+                    })
+                },1000)
+            }else{
+                reject('user not found or Invelid username ')
+            }
+        } catch (error) {
+            console.log(error)
+        }
     })
-    
-    await fetchAllPost().then((succ)=>{
-        console.log(succ)
-    }).catch((rej)=>{
-        console.log(rej)
-    })
-    const userId = await get_ids('usercaleb')
-    const tofollowId = await get_ids('dragon')
-    console.log(userId)
-    console.log(tofollowId)
-    
-   await removefollower('usercaleb','userhafiz').then((succ)=>{
-    console.log(succ)
-   }).catch((fail)=>{
-    console.log(fail)
-   })
 }
-*/
+function removestoredlike(username:string,post_Id:string){
+    return new Promise(async (resolve,reject)=>{
+        try {
+            const userId: userid[] = await get_ids(username)
+            if(userId && userId.length > 0 && userId[0].user_Id !== undefined){
+                const query = `DELETE FROM likes WHERE post_Id = ? AND user_Id = ? `
+                const values = [post_Id,userId[0].user_Id]
+                setTimeout(()=>{
+                    con.query(query,values, (error:any,result:any)=>{
+                        if(error){
+                            console.log(error)
+                        }
+                        if(result.affectedRows > 0){
+                            resolve('true')
+                        }else{
+                            reject('false')
+                        }
+                    })
+                },1000)
+            }else{
+                reject('user not found or Invelid username ')
+            }
+        } catch (error) {
+            console.log(error)
+        }
+    })
+}
 module.exports = {
     createAcc,
     fetchPass,
@@ -485,5 +514,7 @@ module.exports = {
     storeLikes,
     fetchLikesOfpost,
     removefollower,
-    storeUpdatedPost
+    storeUpdatedPost,
+    removePostedData,
+    removestoredlike
 } 

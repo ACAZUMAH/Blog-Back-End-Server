@@ -104,6 +104,7 @@ function postData(title, body, summary, username) {
         }
         catch (error) {
             console.log(error);
+            reject(error);
         }
     });
 }
@@ -148,6 +149,7 @@ function unfollowerUser(username, tounfollow) {
         }
         catch (error) {
             console.log(error);
+            reject(error);
         }
     });
 }
@@ -164,6 +166,50 @@ function makeUpdate(post_Id, title, body, summary, username) {
         }
         catch (error) {
             console.log(error);
+            reject(error);
+        }
+    });
+}
+function removePostData(username, posrt_Id) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            await db.removePostedData(username, posrt_Id).then((success) => {
+                if (success === 'true') {
+                    resolve('Post deleted');
+                }
+            }).catch((failure) => {
+                if (failure === 'false') {
+                    reject('Post not found or Invalid post Id ');
+                }
+                else {
+                    reject(failure);
+                }
+            });
+        }
+        catch (error) {
+            console.log(error);
+        }
+    });
+}
+function removeLike(username, post_Id) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            await db.removestoredlike(username, post_Id).then((success) => {
+                if (success === 'true') {
+                    resolve(success);
+                }
+            }).catch((failure) => {
+                if (failure === 'false') {
+                    reject("Post not found or Invalid post id");
+                }
+                else {
+                    reject(failure);
+                }
+            });
+        }
+        catch (error) {
+            console.log(error);
+            reject(error);
         }
     });
 }
@@ -184,5 +230,7 @@ module.exports = {
     postData,
     addcomment,
     addLike,
-    makeUpdate
+    makeUpdate,
+    removePostData,
+    removeLike
 };

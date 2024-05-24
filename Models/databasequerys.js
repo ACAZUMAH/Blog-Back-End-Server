@@ -417,31 +417,66 @@ function storeUpdatedPost(post_Id, title, body, summary, username) {
         }
     });
 }
-/*
-async function test(){
-    /*await getPostDataStored('bugs','bugs are dirty','fuck',13).then((succ)=>{
-        console.log(succ)
-    }).catch((rej)=>{
-        console.log(rej)
-    })
-    
-    await fetchAllPost().then((succ)=>{
-        console.log(succ)
-    }).catch((rej)=>{
-        console.log(rej)
-    })
-    const userId = await get_ids('usercaleb')
-    const tofollowId = await get_ids('dragon')
-    console.log(userId)
-    console.log(tofollowId)
-    
-   await removefollower('usercaleb','userhafiz').then((succ)=>{
-    console.log(succ)
-   }).catch((fail)=>{
-    console.log(fail)
-   })
+function removePostedData(username, post_Id) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const userId = await get_ids(username);
+            if (userId && userId.length > 0 && userId[0].user_Id !== undefined) {
+                const query = `DELETE FROM post WHERE post_Id = ? AND user_Id = ?`;
+                const values = [post_Id, userId[0].user_Id];
+                setTimeout(() => {
+                    con.query(query, values, (error, results) => {
+                        if (error) {
+                            console.log(error);
+                        }
+                        if (results.affectedRows > 0) {
+                            resolve('true');
+                        }
+                        else {
+                            reject('false');
+                        }
+                    });
+                }, 1000);
+            }
+            else {
+                reject('user not found or Invelid username ');
+            }
+        }
+        catch (error) {
+            console.log(error);
+        }
+    });
 }
-*/
+function removestoredlike(username, post_Id) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const userId = await get_ids(username);
+            if (userId && userId.length > 0 && userId[0].user_Id !== undefined) {
+                const query = `DELETE FROM likes WHERE post_Id = ? AND user_Id = ? `;
+                const values = [post_Id, userId[0].user_Id];
+                setTimeout(() => {
+                    con.query(query, values, (error, result) => {
+                        if (error) {
+                            console.log(error);
+                        }
+                        if (result.affectedRows > 0) {
+                            resolve('true');
+                        }
+                        else {
+                            reject('false');
+                        }
+                    });
+                }, 1000);
+            }
+            else {
+                reject('user not found or Invelid username ');
+            }
+        }
+        catch (error) {
+            console.log(error);
+        }
+    });
+}
 module.exports = {
     createAcc,
     fetchPass,
@@ -459,5 +494,7 @@ module.exports = {
     storeLikes,
     fetchLikesOfpost,
     removefollower,
-    storeUpdatedPost
+    storeUpdatedPost,
+    removePostedData,
+    removestoredlike
 };
