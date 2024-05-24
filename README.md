@@ -54,73 +54,78 @@ This project provides the back-end infrastructure for a blog platform where user
    npm start
    ```
 
-### Usage
+## Usage
 
-- **Authentication**
-  - sign-up:
-    Endpoint: `POST /blog/sign-up
-    Resquest body:
-    {
-       "name": "yourname",
-       "username": "yourusername",
-       "email": "youremail@example.com",
-       "password": "yourpassword"
-    }
+### Authentication
+  - **sign Up**:
+    - Endpoint: `POST /blog/sign-up
+    - Resquest body:
+      ```json
+      {
+        "name": "yourname",
+        "username": "yourusername",
+        "email": "youremail@example.com",
+        "password": "yourpassword"
+      }
+      ```
 
-  - Log In:
-    Endpoint: POST /api/log-in
-    Resquest body:
-    {
-       "email": "youremail@example.com",
-       "password": "yourpassword" 
-    }
+  - **Log In**:
+    - Endpoint: POST /api/log-in
+    - Resquest body:
+      ```json
+      {
+        "email": "youremail@example.com",
+        "password": "yourpassword" 
+      }
+      ```
 
-  - View profile:
-    Endpoint : GET /blog/profile?username={usernname}
+  - **View profile**:
+    - Endpoint : GET /blog/profile?username={usernname}
 
-  -view other users:
-   Endpoint: GET /blog/view-users
+  - **view other users**:
+    - Endpoint: GET /blog/view-users
 
 ### Post Management 
-  - Create post:
-      Endpoint: POST /blog/post?username={username}
-      Request body:
+  - **Create post**:
+    - Endpoint: POST /blog/post?username={username}
+    - Request body:
+      ```json
       {
         "title": "post title",
         "body": "post body",
         "summary": "post summary" 
       }
+      ```
 
-  - Get all Posts:
-     Endpoint: GET /blog/view-post
+  - **Get all Posts**:
+    - Endpoint: GET /blog/view-post
 
-  - Get your own post or a different user post
-     Endpoint: GET /blog/view-post?username={username}
+  - **Get your own post or a different user post**:
+    - Endpoint: GET /blog/view-post?username={username}
 
-  - Update a post 
-      Endpoint: PUT /blog/update?username={username}&post_Id={post_Id}
-      Request body:
+  - **Update a post**: 
+    - Endpoint: PUT /blog/update?username={username}&post_Id={post_Id}
+    - Request body:
+      ```json
       {
         "title": "post title",
         "body": "post body",
         "summary": "post summary" 
       }
-      Endpoint: PATCH /blog/update?username={username}&post_Id={post_Id}
-     {
+      ```
+    - Endpoint: PATCH /blog/update?username={username}&post_Id={post_Id}
+    - Request body
+      ```json
+      {
         "title": "post title",
         "body": "post body",
         "summary": "post summary" 
-     }
-  
-  
-
-  
-  
-
+      }
+      ```
 
 
 ### Follow Management
-  - Follow a User:
-     Endpoint: POST /blog/follow?username={username}&follow={username}
-  - Unfollow a User:
-     Endpoint: DELETE /blog/unfollow?username={username}&unfollow={username}
+  - **Follow a User**:
+    - Endpoint: POST /blog/follow?username={username}&follow={username}
+  - **Unfollow a User**:
+    - Endpoint: DELETE /blog/unfollow?username={username}&unfollow={username}
