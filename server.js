@@ -2,7 +2,8 @@ const http = require('http')
 const { json } = require('stream/consumers')
 const { handlePostRequest,
         handleGetRequest,
-        handlePutRequest } = require('./Routes/requestHandler')
+        handlePutRequest,
+        handleDeleteRequest } = require('./Routes/requestHandler')
  
 
 const server = http.createServer(function handlerequest(req,res){
@@ -18,6 +19,12 @@ const server = http.createServer(function handlerequest(req,res){
         case 'PUT':
             return handlePutRequest(req,res)
             break 
+        case 'PATCH':
+            return handlePatchRequest(req,res)
+            break
+        case 'DELETE':
+            return handleDeleteRequest(req,res)
+            break
         default:
             res.writeHead(501, { "constent-type": "application/json"})
             res.end(JSON.stringify({"message": "Unsuporrted request"}))

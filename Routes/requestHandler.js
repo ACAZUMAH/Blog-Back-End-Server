@@ -11,7 +11,9 @@ const {
     returnProfileInfo,
     commentOnPost,
     likePost,
-    likes } = require('./router')
+    likes,
+    unfollow,
+    updatePost } = require('./router')
 /*function parseUrl(url){
     return new URL(url)
 }
@@ -52,7 +54,7 @@ function handlePostRequest(req, res){
         return likePost(req,res,username,post_Id)
     }else{
         res.writeHeader(400, { "content-type": "application/json"})
-        res.end(JSON.stringify({"message": "unrecognized request path"}))
+        res.end(JSON.stringify({"Bad Request": "unrecognized request path"}))
     }
 }
 
@@ -93,16 +95,38 @@ function handleGetRequest(req, res){
         return viewPostComments(req, res, post_Id)
     }else{
         res.writeHead(400,{ "content-type": "application/json"})
-        res.end(JSON.stringify({"message": "unrecognized request path"}))
+        res.end(JSON.stringify({"Bad Request": "unrecognized request path"}))
     }
 }
 
 function handlePutRequest(req,res){
-
+    const pathname = req.url
+    let post_Id
+    let username
+    if(pathname.match(/\/blog\/update\?username=([0-9a-zA-Z]+)\&post_Id=([0-9]+|[0-9a-fA-F-]{36})/)){
+        const queryparam = querystring.parse(pathname.split('?')[1])
+        post_Id = queryparam.post_Id
+        username = queryparam.username
+        return updatePost(req,res,username,post_Id)
+    }
 }
 
+function handleDeleteRequest(req,res){
+    const pathname = req.url
+    let username 
+    if(pathname.match(/blog\/unfollow\?username=([0-9a-zA-Z]+)\&unfollow=(([0-9a-zA-Z]+))/)){
+        const queryparam = querystring.parse(pathname.split('?')[1])
+        username = queryparam.username
+        const tounfollow = queryparam.unfollow 
+        return unfollow(req,res,username,tounfollow)
+    }else{
+        res.writeHead(400,{ "content-type": "application/json"})
+        res.end(JSON.stringify({"Bad Request": "unrecognized request path"}))
+    }
+}
 module.exports = {
     handlePostRequest,
     handleGetRequest,
-    handlePutRequest
+    handlePutRequest,
+    handleDeleteRequest
 }

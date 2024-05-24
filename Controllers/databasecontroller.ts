@@ -1,5 +1,6 @@
 import { rejects } from "assert"
 import { error } from "console"
+import { resolve } from "path"
 
 const bcrypt = require('bcrypt')
 const db = require('../Models/databasequerys')
@@ -131,6 +132,37 @@ function addLike(username:string,like:string,post_Id:string){
         }
     })
 }
+
+function unfollowerUser(username:string,tounfollow:string){
+    return new Promise(async (resolve,reject)=>{
+        try {
+            await db.removefollower(username,tounfollow).then((success:string)=>{
+                if(success){
+                    resolve('true')
+                }
+            }).catch((failure:string)=>{
+                reject(failure)
+            })
+        } catch (error) {
+            console.log(error)
+        }
+    })
+}
+function makeUpdate(post_Id:string,title:string,body:string,summary:string,username:string){
+    return new Promise(async (resolve,reject)=>{
+        try {
+            await db.storeUpdatedPost(post_Id,title,body,summary,username).then((success:string)=>{
+                if(success === 'updated'){
+                    resolve('true')
+                }
+            }).catch((failure:string)=>{
+                reject(failure)
+            })
+        } catch (error) {
+            console.log(error)
+        }
+    })
+}
 /*async function test(mail:string,pass:string){
     try {
         const check = await checkUser(mail,pass)
@@ -144,7 +176,9 @@ module.exports = {
     signup,
     login,
     addFollowers,
+    unfollowerUser,
     postData,
     addcomment,
-    addLike
+    addLike,
+    makeUpdate
 }

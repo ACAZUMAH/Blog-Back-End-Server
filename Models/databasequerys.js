@@ -34,7 +34,8 @@ function createAcc(name, user_name, email, pass) {
                         return;
                     }
                 }
-                const command = "INSERT INTO users (name,username,email,userpasswords) VALUES ('" + name + "','" + user_name + "','" + email + "','" + pass + "')";
+                const command = `INSERT INTO users (name,username,email,userpasswords) VALUES ( ?, ?, ?, ? )`;
+                const values = [name, user_name, email, pass];
                 con.query(command, (error, result) => {
                     if (error) {
                         console.log(error);
@@ -88,14 +89,16 @@ function fetchProfile(username) {
         try {
             const user_id = await get_ids(username);
             const Id = user_id.map(id => id.user_Id);
-            const query = `SELECT name,username,email FROM users WHERE user_Id = ? `;
-            const value = [Id[0]];
-            con.query(query, value, (error, results, fields) => {
-                if (error) {
-                    console.log(error);
-                }
-                resolve(results);
-            });
+            if (Id && Id.length > 0 && Id[0] !== undefined) {
+                const query = `SELECT name,username,email FROM users WHERE user_Id = ? `;
+                const value = [Id[0]];
+                con.query(query, value, (error, results, fields) => {
+                    if (error) {
+                        console.log(error);
+                    }
+                    resolve(results);
+                });
+            }
         }
         catch (error) {
             console.log(error);
@@ -107,16 +110,18 @@ function fetchfollowers(username) {
         try {
             const user_id = await get_ids(username);
             const Id = user_id.map(id => id.user_Id);
-            const query = `SELECT COUNT(*) AS followers
+            if (Id && Id.length > 0 && Id[0] !== undefined) {
+                const query = `SELECT COUNT(*) AS followers
                 FROM follows 
                 WHERE follows.following = ?`;
-            const value = [Id[0]];
-            con.query(query, value, (error, results, fields) => {
-                if (error) {
-                    console.log(error);
-                }
-                resolve(results);
-            });
+                const value = [Id[0]];
+                con.query(query, value, (error, results, fields) => {
+                    if (error) {
+                        console.log(error);
+                    }
+                    resolve(results);
+                });
+            }
         }
         catch (error) {
             console.log(error);
@@ -128,16 +133,18 @@ function returnfollowing(username) {
         try {
             const user_id = await get_ids(username);
             const Id = user_id.map(id => id.user_Id);
-            const query = `SELECT COUNT(*) AS following
+            if (Id && Id.length > 0 && Id[0] !== undefined) {
+                const query = `SELECT COUNT(*) AS following
                 FROM follows 
                 WHERE follows.user = ?`;
-            const value = [Id[0]];
-            con.query(query, value, (error, results, fields) => {
-                if (error) {
-                    console.log(error);
-                }
-                resolve(results);
-            });
+                const value = [Id[0]];
+                con.query(query, value, (error, results, fields) => {
+                    if (error) {
+                        console.log(error);
+                    }
+                    resolve(results);
+                });
+            }
         }
         catch (error) {
             console.log(error);
@@ -147,8 +154,8 @@ function returnfollowing(username) {
 function get_ids(user_id) {
     return new Promise((resolve, reject) => {
         try {
-            const query = `SELECT user_Id FROM users WHERE username = '` + user_id + `'`;
-            con.query(query, (error, result) => {
+            const query = `SELECT user_Id FROM users WHERE username = ? `;
+            con.query(query, [user_id], (error, result) => {
                 if (error) {
                     console.log(error);
                 }
@@ -165,7 +172,8 @@ function storeFollowers(user_id, followId) {
         try {
             const userId = await get_ids(user_id);
             const tofollowId = await get_ids(followId);
-            if (userId[0].user_Id && tofollowId[0].user_Id) {
+            if (userId && userId.length > 0 && userId[0].user_Id !== undefined &&
+                tofollowId && tofollowId.length > 0 && tofollowId[0].user_Id !== undefined) {
                 const query = `INSERT INTO follows (user,following) VALUES ( ?, ?)`;
                 const values = [userId[0].user_Id, tofollowId[0].user_Id];
                 con.query(query, values, (error, result) => {
@@ -192,10 +200,11 @@ function getPostDataStored(title, body, summary, username) {
             const post_Id = uuidv4();
             const user_id = await get_ids(username);
             const Id = user_id.map(id => id.user_Id);
-            if (typeof Id[0] === "number") {
+            if (Id[0] && Id.length > 0 && typeof Id[0] === "number") {
                 const query = `INSERT INTO post(post_Id,title,body,summary,user_id)
-                VALUES ("` + post_Id + `","` + title + `","` + body + `","` + summary + `",` + Id[0] + `)`;
-                con.query(query, (error, result) => {
+                VALUES ( ?, ?, ?, ?, ? )`;
+                const values = [post_Id, title, body, summary, Id[0]];
+                con.query(query, values, (error, result) => {
                     if (error) {
                         console.log(error);
                     }
@@ -236,11 +245,11 @@ function postOfUser(username) {
         try {
             const user_id = await get_ids(username);
             const Id = user_id.map(id => id.user_Id);
-            if (typeof Id[0] == "number") {
+            if (Id[0] && Id.length > 0 && typeof Id[0] == "number") {
                 const query = `SELECT post_Id,users.username,title,body,summary,date
                 FROM post,users
-                WHERE post.user_Id = users.user_Id and post.user_Id =` + Id[0];
-                con.query(query, (error, result, fields) => {
+                WHERE post.user_Id = users.user_Id and post.user_Id = ? `;
+                con.query(query, [Id[0]], (error, result, fields) => {
                     if (error) {
                         console.log(error);
                     }
@@ -260,8 +269,8 @@ function fetchPost(post_Id) {
     return new Promise((resolve, reject) => {
         const query = `SELECT post_Id,users.username,title,body,summary,date
             FROM post,users
-            WHERE post.user_Id = users.user_Id AND post.post_Id = ` + `'` + post_Id + `'`;
-        con.query(query, (error, results, fields) => {
+            WHERE post.user_Id = users.user_Id AND post.post_Id = ? `;
+        con.query(query, [post_Id], (error, results, fields) => {
             if (error) {
                 console.log(error);
             }
@@ -274,8 +283,8 @@ function fetchCommentsOfApost(post_Id) {
         try {
             const query = `SELECT users.username,comment,comment_date 
             FROM comments,users 
-            WHERE comments.user_Id = users.user_Id AND comments.post_Id = ` + `'` + post_Id + `'`;
-            con.query(query, (error, results, fields) => {
+            WHERE comments.user_Id = users.user_Id AND comments.post_Id = ? `;
+            con.query(query, [post_Id], (error, results, fields) => {
                 if (error) {
                     console.log(error);
                 }
@@ -292,7 +301,7 @@ function storeComment(username, comment, post_Id) {
         try {
             const user_id = await get_ids(username);
             const Id = user_id.map(id => id.user_Id);
-            if (typeof Id[0] === "number") {
+            if (Id[0] && Id.length > 0 && typeof Id[0] === "number") {
                 const query = `INSERT INTO comments(comment,post_ID,user_id)
                     VALUES ( ?, ?, ? )`;
                 const values = [comment, post_Id, Id];
@@ -320,7 +329,7 @@ function pushLike(username, like, post_Id) {
             }
             const user_id = await get_ids(username);
             const Id = user_id.map(id => id.user_Id);
-            if (typeof Id[0] === "number") {
+            if (Id[0] && Id.length > 0 && typeof Id[0] === "number") {
                 const query = `INSERT INTO likes (numberOfLikes,post_Id,user_Id) VALUES ( ?, ?, ?)`;
                 const values = [likenum, post_Id, Id[0]];
                 con.query(query, values, (error, results, fields) => {
@@ -339,8 +348,8 @@ function pushLike(username, like, post_Id) {
 function fetchLikesOfpost(post_Id) {
     return new Promise((resolve, reject) => {
         try {
-            const query = `SELECT COUNT(like_Id) As likes FROM likes WHERE likes.post_Id = ` + mysql.escape(post_Id);
-            con.query(query, (error, results, fields) => {
+            const query = `SELECT COUNT(like_Id) As likes FROM likes WHERE likes.post_Id = ? `;
+            con.query(query, [post_Id], (error, results, fields) => {
                 if (error) {
                     console.log(error);
                 }
@@ -357,20 +366,50 @@ function removefollower(username, tounfollow) {
         try {
             const userId = await get_ids(username);
             const tounfollowId = await get_ids(tounfollow);
-            if (typeof userId[0].user_Id === "number" && typeof tounfollowId[0].user_Id === "number") {
+            if (userId && userId.length > 0 && userId[0].user_Id !== undefined &&
+                tounfollowId && tounfollowId.length > 0 && tounfollowId[0].user_Id !== undefined) {
                 const query = `DELETE FROM follows WHERE 
-                follows.user = ` + userId[0].user_Id + ` AND follows.following = ` + tounfollowId[0].user_Id;
-                con.query(query, (error, result) => {
+                follows.user = ? AND follows.following = ? `;
+                con.query(query, [userId[0].user_Id, tounfollowId[0].user_Id], (error, result) => {
                     if (error) {
                         console.log(error);
                     }
-                    if (result.affectedRows) {
+                    if (result.affectedRows > 0) {
                         resolve('true');
                     }
                 });
             }
             else {
-                reject('User not found');
+                reject('User not found or Invalid username');
+            }
+        }
+        catch (error) {
+            console.log(error);
+        }
+    });
+}
+function storeUpdatedPost(post_Id, title, body, summary, username) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const userId = await get_ids(username);
+            if (userId && userId.length > 0 && userId[0].user_Id !== undefined) {
+                const query = `UPDATE post SET title = ?, body = ?, summary =? 
+                WHERE post.post_Id = ? AND post.user_Id =? `;
+                const values = [title, body, summary, post_Id, userId[0]];
+                con.query(query, values, (error, result) => {
+                    if (error) {
+                        console.log(error);
+                    }
+                    if (result.affectedRows > 0) {
+                        resolve('updated');
+                    }
+                    else {
+                        reject('post ID not found Or Invalid post ID');
+                    }
+                });
+            }
+            else {
+                reject('user not found or Invelid username ');
             }
         }
         catch (error) {
@@ -419,5 +458,6 @@ module.exports = {
     storeComment,
     pushLike,
     fetchLikesOfpost,
-    removefollower
+    removefollower,
+    storeUpdatedPost
 };

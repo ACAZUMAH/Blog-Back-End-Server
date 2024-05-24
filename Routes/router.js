@@ -238,18 +238,55 @@ async function viewPostComments(req,res,post_Id){
     }
 }
 async function likes(req,res,post_Id){
-    const likesforpost = await returnLikes(post_Id)
-    if(likesforpost.length !== 0 || likesforpost[0] !== undefined ){
-        const post = await Post(post_Id)
-        res.writeHead(200,{"content-type": "application/json"})
-        res.write(JSON.stringify(post))
-        res.end(JSON.stringify(likesforpost))
-    }else{
-        res.writeHead(404,{"content-type": "application/json"})
-        res.end(JSON.stringify({"message": "No likes yet"}))
+    try {
+        const likesforpost = await returnLikes(post_Id)
+        if(likesforpost.length !== 0 || likesforpost[0] !== undefined ){
+            const post = await Post(post_Id)
+            res.writeHead(200,{"content-type": "application/json"})
+            res.write(JSON.stringify(post))
+            res.end(JSON.stringify(likesforpost))
+        }else{
+           res.writeHead(404,{"content-type": "application/json"})
+           res.end(JSON.stringify({"message": "No likes yet"}))
+        }
+    } catch (error) {
+        console.log(error)
+        res.statusCode = 500
+        res.end()
     }
 }
 
+async function unfollow(req,res,username,tounfollow){
+    try {
+        const unfollowuser = await dbcontrol.unfollowerUser(username,tounfollow)
+        if(unfollowuser){
+            res.writeHead(200, {"content-type": "applicatio/json"})
+            res.end(JSON.stringify({"message": "removed from your followers"}))
+        }
+    } catch (error) {
+        //console.log(error)
+        res.writeHead(404, {"content-type": "application/json"})
+        res.end(JSON.stringify({ "message" : error }))
+    }
+}
+
+async function updatePost(req,res,username,post_Id){
+    try {
+        const data = await getPostData(req)
+        const { title ,body, summary } = JSON.parse(data)
+        const pushupdate =  await dbcontrol.makeUpdate(post_Id,title,body,summary,username)
+        if(pushupdate === 'true'){
+            const post = await Post(post_Id)
+            res.writeHead(200,{"content-type": "application/json"})
+            res.end(JSON.stringify(post))
+        }
+
+    } catch (error) {
+        //console.log(error)
+        res.writeHead(404, {"content-type": "application/json"})
+        res.end(JSON.stringify({"message": error}))
+    }
+}
 module.exports = { 
     handleAccountCreation,
     returnProfileInfo,
@@ -262,5 +299,7 @@ module.exports = {
     viewPostComments,
     commentOnPost,
     likePost,
-    likes
+    likes,
+    unfollow,
+    updatePost
 }

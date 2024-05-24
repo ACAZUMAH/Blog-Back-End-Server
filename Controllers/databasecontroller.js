@@ -135,6 +135,39 @@ function addLike(username, like, post_Id) {
         }
     });
 }
+function unfollowerUser(username, tounfollow) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            await db.removefollower(username, tounfollow).then((success) => {
+                if (success) {
+                    resolve('true');
+                }
+            }).catch((failure) => {
+                reject(failure);
+            });
+        }
+        catch (error) {
+            console.log(error);
+        }
+    });
+}
+function makeUpdate(post_Id, title, body, summary, username) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            await db.storeUpdatedPost(post_Id, title, body, summary, username).then((success) => {
+                if (success === 'updated') {
+                    resolve('true');
+                }
+            }).catch((failure) => {
+                console.log(failure);
+                reject(failure);
+            });
+        }
+        catch (error) {
+            console.log(error);
+        }
+    });
+}
 /*async function test(mail:string,pass:string){
     try {
         const check = await checkUser(mail,pass)
@@ -148,7 +181,9 @@ module.exports = {
     signup,
     login,
     addFollowers,
+    unfollowerUser,
     postData,
     addcomment,
-    addLike
+    addLike,
+    makeUpdate
 };
