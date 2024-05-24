@@ -27,5 +27,5 @@ This project provides the back-end infrastructure for a blog platform where user
 ### Steps to Install
 1. **Clone the Repository**:
    ```bash
-   git clone https://github.com//blog-backend-server.git
+   git clone https://github.com/ACAZUMAH/blog-backend-server.git
    cd blog-backend-server
