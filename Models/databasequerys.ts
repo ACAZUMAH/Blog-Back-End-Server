@@ -1,3 +1,5 @@
+import { Console } from "console"
+
 const mysql = require('mysql')
 const { v4: uuidv4 } = require('uuid')
 
@@ -380,6 +382,31 @@ function fetchLikesOfpost(post_Id:string){
         }
     })
 }
+
+function removefollower(username:string,tounfollow:string){
+    return new Promise( async (resolve,reject)=>{
+        try {
+            const userId: userid[] = await get_ids(username)
+            const tounfollowId: userid[] = await get_ids(tounfollow)
+            if(typeof userId[0].user_Id === "number" && typeof tounfollowId[0].user_Id === "number"){
+                const query = `DELETE FROM follows WHERE 
+                follows.user = `+userId[0].user_Id+` AND follows.following = `+tounfollowId[0].user_Id
+                con.query(query, (error:any,result:any)=>{
+                    if(error){
+                        console.log(error)
+                    }
+                    if(result.affectedRows){
+                        resolve('true')
+                    }
+                })
+            }else{
+                reject('User not found')
+            }
+        } catch (error) {
+            console.log(error)
+        }
+    })
+}
 /*
 async function test(){
     /*await getPostDataStored('bugs','bugs are dirty','fuck',13).then((succ)=>{
@@ -397,6 +424,12 @@ async function test(){
     const tofollowId = await get_ids('dragon')
     console.log(userId)
     console.log(tofollowId)
+    
+   await removefollower('usercaleb','userhafiz').then((succ)=>{
+    console.log(succ)
+   }).catch((fail)=>{
+    console.log(fail)
+   })
 }
 */
 module.exports = {
@@ -414,5 +447,6 @@ module.exports = {
     fetchPost,
     storeComment,
     pushLike,
-    fetchLikesOfpost
+    fetchLikesOfpost,
+    removefollower
 } 
