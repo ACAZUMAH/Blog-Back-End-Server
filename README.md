@@ -70,7 +70,7 @@ This project provides the back-end infrastructure for a blog platform where user
       ```
 
   - **Log In**:
-    - Endpoint: POST /api/log-in
+    - Endpoint: POST /blog/log-in
     - Resquest body:
       ```json
       {
