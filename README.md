@@ -48,8 +48,9 @@ This project provides the back-end infrastructure for a blog platform where user
    npm start
 
 ### Usage
--**Authentication**
-  -sign-up:
+
+- **Authentication**
+  - sign-up:
     Endpoint: `POST /blog/sign-up
     Resquest body:
     {
@@ -59,7 +60,7 @@ This project provides the back-end infrastructure for a blog platform where user
        "password": "yourpassword"
     }
 
-  -Log In:
+  - Log In:
     Endpoint: POST /api/log-in
     Resquest body:
     {
@@ -67,42 +68,42 @@ This project provides the back-end infrastructure for a blog platform where user
        "password": "yourpassword" 
     }
 
-  -View profile:
+  - View profile:
     Endpoint : GET /blog/profile?username={usernname}
 
   -view other users:
    Endpoint: GET /blog/view-users
 
 ### Post Management 
-  -Create post:
-    Endpoint: POST /blog/post?username={username}
-    Request body:
-    {
-      "title": "post title",
-      "body": "post body",
-      "summary": "post summary" 
-    }
+  - Create post:
+      Endpoint: POST /blog/post?username={username}
+      Request body:
+      {
+        "title": "post title",
+        "body": "post body",
+        "summary": "post summary" 
+      }
 
-  -Get all Posts:
-    Endpoint: GET /blog/view-post
+  - Get all Posts:
+     Endpoint: GET /blog/view-post
 
-  -Get your own post or a different user post
-    Endpoint: GET /blog/view-post?username={username}
+  - Get your own post or a different user post
+     Endpoint: GET /blog/view-post?username={username}
 
-  -Update a post 
-    Endpoint: PUT /blog/update?username={username}&post_Id={post_Id}
-    Request body:
-    {
-      "title": "post title",
-      "body": "post body",
-      "summary": "post summary" 
-    }
-    Endpoint: PATCH /blog/update?username={username}&post_Id={post_Id}
-    {
-      "title": "post title",
-      "body": "post body",
-      "summary": "post summary" 
-    }
+  - Update a post 
+      Endpoint: PUT /blog/update?username={username}&post_Id={post_Id}
+      Request body:
+      {
+        "title": "post title",
+        "body": "post body",
+        "summary": "post summary" 
+      }
+      Endpoint: PATCH /blog/update?username={username}&post_Id={post_Id}
+     {
+        "title": "post title",
+        "body": "post body",
+        "summary": "post summary" 
+     }
   
   
 
@@ -112,7 +113,7 @@ This project provides the back-end infrastructure for a blog platform where user
 
 
 ### Follow Management
-  -Follow a User:
-    Endpoint: POST /blog/follow?username={username}&follow={username}
-  -Unfollow a User:
-    Endpoint: DELETE /blog/unfollow?username={username}&unfollow={username}
+  - Follow a User:
+     Endpoint: POST /blog/follow?username={username}&follow={username}
+  - Unfollow a User:
+     Endpoint: DELETE /blog/unfollow?username={username}&unfollow={username}
