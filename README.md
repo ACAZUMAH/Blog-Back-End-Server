@@ -30,22 +30,24 @@ This project provides the back-end infrastructure for a blog platform where user
    git clone https://github.com/ACAZUMAH/blog-backend-server.git
    cd blog-backend-server
 
-2. Install Dependencies:
+2. **Install Dependencies**:
+  ```bash
    npm install
 
-3. Set Up the Database:
+3. **Set Up the Database**:
    Make sure you have MySQL installed and running.
    Create a new database for the project.
 
-4. Run Migrations:
+4. **Run Migrations**:
   If you are using a migration tool like sequelize or typeorm, run the necessary migration command. For example, with typeorm:
     npm run typeorm migration:run
 
-5. start server
+5. **start server**
+  ```bash
    npm start
 
 ## Usage
-**Authentication**
+-**Authentication**
   -sign-up:
     Endpoint: `POST /blog/sign-up
     Resquest body:
