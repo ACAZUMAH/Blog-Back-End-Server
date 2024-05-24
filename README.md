@@ -31,11 +31,9 @@ This project provides the back-end infrastructure for a blog platform where user
    cd blog-backend-server
 
 2. **Install Dependencies**:
-   ```bash
    npm install
 
 3. **Set Up the Database**:
-   ```bash
    Make sure you have MySQL installed and running.
    Create a new database for the project.
 
@@ -44,7 +42,6 @@ This project provides the back-end infrastructure for a blog platform where user
     npm run typeorm migration:run
 
 5. **start server**
-  ```bash
    npm start
 
 ### Usage
