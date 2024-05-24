@@ -71,7 +71,7 @@ function fetchPass(email) {
 function fetchAllUsers() {
     return new Promise((resolve, reject) => {
         try {
-            const query = `SELECT name,username FROM users`;
+            const query = `SELECT name,username FROM users LIMIT 50`;
             con.query(query, (error, result, fields) => {
                 if (error) {
                     console.log(error);
@@ -320,11 +320,11 @@ function storeComment(username, comment, post_Id) {
         }
     });
 }
-function pushLike(username, like, post_Id) {
+function storeLikes(username, post_Id, like) {
     return new Promise(async (resolve, reject) => {
         try {
             let likenum = 0;
-            if (like === 'true') {
+            if (like) {
                 likenum += 1;
             }
             const user_id = await get_ids(username);
@@ -456,7 +456,7 @@ module.exports = {
     fetchCommentsOfApost,
     fetchPost,
     storeComment,
-    pushLike,
+    storeLikes,
     fetchLikesOfpost,
     removefollower,
     storeUpdatedPost

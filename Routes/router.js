@@ -132,11 +132,10 @@ async function makeApost(req,res,username){
 
 async function returnUserPost(req,res,username){
     try {
-        await returnPostbyUsername(username)
-        .then((userpost) =>{
+        await returnPostbyUsername(username).then((userpost) =>{
             if(userpost){
                 res.writeHead(200,{"content-type": "application/json"})
-                res.end(userpost)
+                res.end(JSON.stringify(userpost))
             }else{
                 res.writeHead(404,{"content-type": "appliaction/json"})
                 res.end(JSON.stringify({"message": "You don't have a post yet"}))
@@ -197,11 +196,9 @@ async function commentOnPost(req,res,username,post_Id){
     }
 }
 
-async function likePost(req,res,username,post_Id){
+async function likePost(req,res,username,post_Id,like){
     try {
-        const fromreq = await getPostData(req)
-        const { like } = JSON.parse(fromreq)
-        const likes = await dbcontrol.addLike(username,like,post_Id)
+        const likes = await dbcontrol.addLike(username,post_Id,like)
         if(likes === 'true'){
             const likedpost = await Post(post_Id)
             const likesinfo = await returnLikes(post_Id)
@@ -287,6 +284,33 @@ async function updatePost(req,res,username,post_Id){
         res.end(JSON.stringify({"message": error}))
     }
 }
+
+async function updatepart(req,res,username,post_Id){
+    try {
+        const data = await getPostData(req)
+        const { title, body, summary } = JSON.parse(data)
+        const post = await Post(post_Id)
+        if(post[0].username === username){
+            const newData ={
+                title: title || post[0].title,
+                body: body || post[0].body,
+                summary: summary || post[0].summary
+            }
+            const update =  await dbcontrol.makeUpdate(post_Id,newData.title,newData.body,newData.summary,username)
+            if(update === 'true'){
+                const updatedpost = await Post(post_Id)
+                res.writeHead(200,{"content-type": "application/json"})
+                res.end(JSON.stringify(updatedpost))
+            }
+        }else{
+            res.writeHead(200,{"content-type": "application/json"})
+            res.end(JSON.stringify({"message": "Username or post not found"}))
+        }
+    } catch (error) {
+        res.writeHead(404, {"content-type": "application/json"})
+        res.end(JSON.stringify({"message": error}))
+    }
+}
 module.exports = { 
     handleAccountCreation,
     returnProfileInfo,
@@ -301,5 +325,6 @@ module.exports = {
     likePost,
     likes,
     unfollow,
-    updatePost
+    updatePost,
+    updatepart
 }

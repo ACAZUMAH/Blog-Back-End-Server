@@ -120,10 +120,10 @@ function addcomment(username, comment, post_Id) {
         }
     });
 }
-function addLike(username, like, post_Id) {
+function addLike(username, post_Id, like) {
     return new Promise(async (resolve, reject) => {
         try {
-            await db.pushLike(username, like, post_Id)
+            await db.storeLikes(username, post_Id, like)
                 .then((succ) => {
                 if (succ === 'liked') {
                     resolve('true');
@@ -159,7 +159,6 @@ function makeUpdate(post_Id, title, body, summary, username) {
                     resolve('true');
                 }
             }).catch((failure) => {
-                console.log(failure);
                 reject(failure);
             });
         }

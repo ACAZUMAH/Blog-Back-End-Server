@@ -3,6 +3,7 @@ const { json } = require('stream/consumers')
 const { handlePostRequest,
         handleGetRequest,
         handlePutRequest,
+        handlePatchRequest,
         handleDeleteRequest } = require('./Routes/requestHandler')
  
 

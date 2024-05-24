@@ -67,6 +67,9 @@ This project provides the back-end infrastructure for a blog platform where user
   -View profile:
     Endpoint : GET /blog/profile?username={usernname}
 
+  -view other users:
+   Endpoint: GET /blog/view-users
+
 ## Post Management 
   -Create post:
     Endpoint: POST /blog/post?username={username}
@@ -91,6 +94,15 @@ This project provides the back-end infrastructure for a blog platform where user
       "body": "post body",
       "summary": "post summary" 
     }
+    Endpoint: PATCH /blog/update?username={username}&post_Id={post_Id}
+    {
+      "title": "post title",
+      "body": "post body",
+      "summary": "post summary" 
+    }
+  
+  
+
   
   
 

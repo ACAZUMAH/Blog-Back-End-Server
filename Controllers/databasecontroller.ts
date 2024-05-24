@@ -118,10 +118,10 @@ function addcomment(username:string,comment:string,post_Id:string){
         }
     })
 }
-function addLike(username:string,like:string,post_Id:string){
+function addLike(username:string,post_Id:string,like:boolean){
     return new Promise(async(resolve,reject) =>{
         try {
-            await db.pushLike(username,like,post_Id)
+            await db.storeLikes(username,post_Id,like)
             .then((succ:string)=>{
                 if(succ === 'liked'){
                     resolve('true')
