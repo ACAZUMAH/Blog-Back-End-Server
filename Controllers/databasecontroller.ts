@@ -205,6 +205,25 @@ function removeLike(username:string,post_Id:string){
         }
     })
 }
+function pushupdatedComment(comment:string|number,username:string,post_Id:string,commentId:number){
+    return new Promise (async (resolve,reject)=>{
+        try {
+            await db.storeUpdatedcomment(comment,username,post_Id,commentId).then((success:string)=>{
+                if(success === 'true'){
+                    resolve(success)
+                }
+            }).catch((failure:string)=>{
+                if(failure === 'false'){
+                    reject('Invalid post Id or comment Id')
+                }else{
+                    reject(failure)
+                }
+            })
+        } catch (error) {
+          console.log(error)
+        }
+    })
+}
 /*async function test(mail:string,pass:string){
     try {
         const check = await checkUser(mail,pass)
@@ -224,5 +243,6 @@ module.exports = {
     addLike,
     makeUpdate,
     removePostData,
-    removeLike
+    removeLike,
+    pushupdatedComment
 }

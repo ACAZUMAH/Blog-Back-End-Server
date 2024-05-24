@@ -16,11 +16,8 @@ const {
     updatePost,
     updatepart,
     deletePost,
-    unlikePost } = require('./router')
-/*function parseUrl(url){
-    return new URL(url)
-}
-*/    
+    unlikePost,
+    updateComment } = require('./router')
 
 function handlePostRequest(req, res){
     const pathname = req.url
@@ -107,12 +104,23 @@ function handlePutRequest(req,res){
     const pathname = req.url
     let post_Id
     let username
+    let commentId
     //endpoint for updating a post
     if(pathname.match(/\/blog\/update\?username=([0-9a-zA-Z]+)&post_Id=([0-9a-fA-F-]+)$/)){
         const queryparam = querystring.parse(pathname.split('?')[1])
         post_Id = queryparam.post_Id
         username = queryparam.username
         return updatePost(req,res,username,post_Id)
+    //endpoint for updating a comment
+    }else if(pathname.match(/\/blog\/update-comment\?username=([0-9a-zA-Z]+)&comment_Id=([0-9]+)&post_Id=([0-9a-fA-F-]+)$/)){
+        const queryparam = querystring.parse(pathname.split('?')[1])
+        post_Id = queryparam.post_Id
+        username = queryparam.username
+        commentId = queryparam.comment_Id
+        return updateComment(req,res,username,post_Id,commentId)
+    }else{
+        res.writeHead(400,{ "content-type": "application/json"})
+        res.end(JSON.stringify({"Bad Request": "unrecognized request path"}))
     }
 }
 
@@ -126,6 +134,9 @@ function handlePatchRequest(req,res){
         post_Id = queryparam.post_Id
         username = queryparam.username
         return updatepart(req,res,username,post_Id)
+    }else{
+        res.writeHead(400,{ "content-type": "application/json"})
+        res.end(JSON.stringify({"Bad Request": "unrecognized request path"}))
     }
 }
 

@@ -12,20 +12,16 @@ const server = http.createServer(function handlerequest(req,res){
     switch(method){
         case 'POST':
             return handlePostRequest(req,res)
-            break 
         case 'GET':
             //console.log(req.url)
             return handleGetRequest(req,res)
-            break 
         case 'PUT':
+            //console.log(req.url)
             return handlePutRequest(req,res)
-            break 
         case 'PATCH':
             return handlePatchRequest(req,res)
-            break
         case 'DELETE':
             return handleDeleteRequest(req,res)
-            break
         default:
             res.writeHead(501, { "constent-type": "application/json"})
             res.end(JSON.stringify({"message": "Unsuporrted request"}))

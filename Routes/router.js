@@ -27,8 +27,6 @@ async function handleAccountCreation(req,res){
         })
     } catch (error) {
         console.log(error)
-        res.statusCode = 500
-        res.end()
     }
 }
 async function returnProfileInfo(req,res,username){
@@ -43,8 +41,6 @@ async function returnProfileInfo(req,res,username){
         }
     } catch (error) {
         console.log(error)
-        res.statusCode = 500
-        res.end()
     }
 }
 async function handleLogin(req,res){
@@ -56,7 +52,7 @@ async function handleLogin(req,res){
             const redirection = await returnAllPost()
             res.writeHead(200, {"content-type": "application/json"})
             res.write(JSON.stringify({"message": "welcome back"}))
-            res.end(redirection)
+            res.end(JSON.stringify(redirection))
         }else if(logRes === 'failure'){
             res.writeHead(401, {"content-type": "application/json"})
             res.end(JSON.stringify({"message": "password mismatch"}))
@@ -73,15 +69,13 @@ async function returnAllUsers(req,res){
         const users = await allUsers()
         if(users){
             res.writeHead(200,{"content-type": "appliaction/json"})
-            res.end(users)
+            res.end(JSON.stringify(users))
         }else{
             res.writeHead(500, {"content-type": "application/json"})
             res.end(JSON.stringify({"message": "Couldn't get users"}))
         }
     } catch (error) {
         console.log(error)
-        res.statusCode = 500
-        res.end()
     }
 }
 
@@ -89,14 +83,14 @@ async function addfollow(req, res, user,userTofollow){
     try {
         const follow = await dbcontrol.addFollowers(user,userTofollow)
         if(follow === "added"){
-            return responses(res,201,{"content-type": "application/json"},{"message": "added to your followers"})
+            res.writeHead(201,{"content-type": "application/json"})
+            res.end(JSON.stringify({"message": "added to your followers"}))
         }else{
-            return responses(res,404,{"content-type":"application/json"},follow)
+            res.writeHead(404,{"content-type":"application/json"})
+            res.end(JSON.stringify(follow))
         }
     } catch (error) {
         console.log(error)
-        res.statusCode = 500
-        res.end()
     }
 }
 async function makeApost(req,res,username){
@@ -125,8 +119,6 @@ async function makeApost(req,res,username){
         })
     } catch (error) {
         console.log(error)
-        res.statusCode = 500
-        res.end()
     }
 }
 
@@ -147,8 +139,6 @@ async function returnUserPost(req,res,username){
         
     } catch (error) {
         console.log(error)
-        res.statusCode = 500
-        res.end()
     }
 }
 
@@ -164,8 +154,6 @@ async function returnAllPosts(req,res){
         }
     } catch (error) {
         console.log(error)
-        res.statusCode = 500
-        res.end()
     }
 }
 
@@ -191,8 +179,6 @@ async function commentOnPost(req,res,username,post_Id){
         }
     } catch (error) {
         console.log(error)
-        res.statusCode = 500
-        res.end()
     }
 }
 
@@ -211,8 +197,6 @@ async function likePost(req,res,username,post_Id,like){
         }
     } catch (error) {
         console.log(error)
-        res.statusCode = 500
-        res.end()
     }
 }
 async function viewPostComments(req,res,post_Id){
@@ -222,7 +206,7 @@ async function viewPostComments(req,res,post_Id){
         if(postComments.length !== 0 || postComments[0] !== undefined){
             res.writeHead(200,{"content-type": "application/json"})
             res.write(JSON.stringify(post))
-            res.end(postComments)
+            res.end(JSON.stringify(postComments))
         }else{
             res.writeHead(404,{"content-type": "application/json"})
             res.write(JSON.stringify(post))
@@ -230,8 +214,6 @@ async function viewPostComments(req,res,post_Id){
         }
     } catch (error) {
         console.log(error)
-        res.statusCode = 500
-        res.end()
     }
 }
 async function likes(req,res,post_Id){
@@ -248,8 +230,6 @@ async function likes(req,res,post_Id){
         }
     } catch (error) {
         console.log(error)
-        res.statusCode = 500
-        res.end()
     }
 }
 
@@ -338,6 +318,23 @@ async function unlikePost(req,res,username,post_Id){
         }
     } catch (error) {
        res.writeHead(404, {"content-type": "application/json"})
+       res.end(JSON.stringify({"message": error}))
+    }
+}
+
+async function updateComment(req,res,username,post_Id,commentId){
+    try {
+        const data = await getPostData(req)
+        const { comment } = JSON.parse(data)
+        const updatecomment = await dbcontrol.pushupdatedComment(comment,username,post_Id,commentId)
+        if(updatecomment == 'true'){
+            return viewPostComments(req,res,post_Id)
+        }else{
+            res.writeHead(404, {"content-type": "application/json"})
+            res.end(JSON.stringify({"message": updatecomment}))
+        }
+    } catch (error) {
+        res.writeHead(404, {"content-type": "application/json"})
         res.end(JSON.stringify({"message": error}))
     }
 }
@@ -358,5 +355,6 @@ module.exports = {
     updatePost,
     updatepart,
     deletePost,
-    unlikePost
+    unlikePost,
+    updateComment
 }

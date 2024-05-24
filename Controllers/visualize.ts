@@ -23,6 +23,7 @@ type followers ={
     followers: number 
 }
 type comment ={
+    comment_Id:string
     username: string,
     comment: string,
     comment_date: string | number

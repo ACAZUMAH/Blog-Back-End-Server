@@ -281,7 +281,7 @@ function fetchPost(post_Id) {
 function fetchCommentsOfApost(post_Id) {
     return new Promise((resolve, reject) => {
         try {
-            const query = `SELECT users.username,comment,comment_date 
+            const query = `SELECT comment_Id,users.username,comment,comment_date 
             FROM comments,users 
             WHERE comments.user_Id = users.user_Id AND comments.post_Id = ? `;
             con.query(query, [post_Id], (error, results, fields) => {
@@ -477,6 +477,37 @@ function removestoredlike(username, post_Id) {
         }
     });
 }
+function storeUpdatedcomment(comment, username, post_Id, comment_Id) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const userId = await get_ids(username);
+            if (userId && userId.length > 0 && userId[0].user_Id !== undefined) {
+                const query = `UPDATE comments SET comment = ? 
+                WHERE post_Id = ? and user_Id = ? and comment_Id = ? `;
+                const values = [comment, post_Id, userId[0].user_Id, comment_Id];
+                setTimeout(() => {
+                    con.query(query, values, (error, result) => {
+                        if (error) {
+                            console.log(error);
+                        }
+                        if (result.affectedRows > 0) {
+                            resolve('true');
+                        }
+                        else {
+                            reject('false');
+                        }
+                    });
+                }, 1000);
+            }
+            else {
+                reject('user not found or Invelid username ');
+            }
+        }
+        catch (error) {
+            console.log(error);
+        }
+    });
+}
 module.exports = {
     createAcc,
     fetchPass,
@@ -496,5 +527,6 @@ module.exports = {
     removefollower,
     storeUpdatedPost,
     removePostedData,
-    removestoredlike
+    removestoredlike,
+    storeUpdatedcomment
 };

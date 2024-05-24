@@ -114,7 +114,7 @@ This project provides the back-end infrastructure for a blog platform where user
       }
       ```
     - Endpoint: PATCH /blog/update?username={username}&post_Id={post_Id}
-    - Request body
+    - Request body:
       ```json
       {
         "title": "post title",
@@ -130,6 +130,34 @@ This project provides the back-end infrastructure for a blog platform where user
   
   - **Unlike a Post**:
     - EndPoint: DELETE /blog/unlike?username={username}&post_Id={post_Id}
+
+  - **View likes of a Post**:
+    - Endpoint: GET /blog/likes?post_Id={post_Id}
+
+### Comment Management
+  - **Add Comment**:
+    - Endpoint: POST /blog/comment-on-post?username={username}&post_Id={post_Id}
+    - Request Body:
+      ```json
+      {
+        "comment": "your comment" 
+      }
+      ```
+
+  - **Update a comment**:
+    - Endpoint: PUT /blog/update-comment?username={username}&post_Id={post_Id}
+    - Request Body:
+      ```json
+      {
+        "comment": "new comment"
+      }
+      ``` 
+
+  - **View Comments of a Post**:
+    - Endpoint: GET /blog/view-post/comments?post_Id=
+  
+  - **Delete a comment**:
+    -Endpoint: DELETE /blog/delete-comment?username={username}&post_Id={post_Id}
 
 
 ### Follow Management
