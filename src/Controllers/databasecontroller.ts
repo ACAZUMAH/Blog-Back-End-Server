@@ -11,14 +11,14 @@ const db = require('../Models/databasequerys')
     pass: string,
 }*/
 
-function hasPassword(user_password: string){
-    return new Promise((resolve,reject) =>{
+function hasPassword(user_password: string):Promise<string>{
+    return new Promise((resolve,reject):void =>{
         const saltRounds = 10
-        bcrypt.genSalt(saltRounds,(err:any,salt:string)=>{
+        bcrypt.genSalt(saltRounds,(err:any,salt:string):void =>{
             if(err){
                 console.log(err)
             }
-            bcrypt.hash(user_password,salt,(err:any,hash:string)=>{
+            bcrypt.hash(user_password,salt,(err:any,hash:string):void =>{
                 if(err){
                     console.log(err)
                 }else{
@@ -29,20 +29,20 @@ function hasPassword(user_password: string){
          
     }) 
 }
-function signup(name:string,username:string,email:string,pass:string){
-    return new Promise(async (resolve,reject)=>{
+function signup(name:string,username:string,email:string,pass:string): Promise<string>{
+    return new Promise(async (resolve,reject): Promise<void>=>{
         const hashedPass = await hasPassword(pass)
-        await db.createAcc(name,username,email,hashedPass).then((succ:string) =>{
+        await db.createAcc(name,username,email,hashedPass).then((succ:string): void  =>{
             resolve(succ)
-        }).catch((rej:string)=>{
+        }).catch((rej:string):void =>{
             if(rej){
                 reject(rej)
             }
         })
     }) 
 }
-function checkUser(email:string, password:string) {
-    return new Promise(async (resolve,reject)=>{
+function checkUser(email:string, password:string): Promise<string> {
+    return new Promise(async (resolve,reject): Promise<void> =>{
         try{
             const hashpass = await db.fetchPass(email)
             if(hashpass){
@@ -59,8 +59,8 @@ function checkUser(email:string, password:string) {
     })
 
 }
-function login(email:string, password:string){
-    return new Promise(async (resolve,reject) =>{
+function login(email:string, password:string): Promise<string>{
+    return new Promise(async (resolve,reject): Promise<void> =>{
         try {
             const validate =  await checkUser(email, password)
             if(validate === 'true'){
@@ -76,8 +76,8 @@ function login(email:string, password:string){
         //console.log(validate)
     })
 }
-function addFollowers(user:string, userTofollow:string){
-    return new Promise(async (resolve,reject) =>{
+function addFollowers(user:string, userTofollow:string): Promise<string>{
+    return new Promise(async (resolve,reject): Promise<void> =>{
         try {
             const followerAdded = await db.storeFollowers(user,userTofollow)
             if(followerAdded){
@@ -90,13 +90,13 @@ function addFollowers(user:string, userTofollow:string){
         }
     })
 }
-function postData(title:string,body:string,summary:string,username:string){
+function postData(title:string,body:string,summary:string,username:string): Promise<string> {
     return new Promise(async (resolve,reject)=>{
         try {
             await db.getPostDataStored(title,body,summary,username)
-            .then((succ:string)=>{
+            .then((succ:string):void =>{
                 resolve(succ)
-            }).catch((rej:string)=>{
+            }).catch((rej:string): void =>{
                 reject(rej)
             })
         } catch (error) {
@@ -107,8 +107,8 @@ function postData(title:string,body:string,summary:string,username:string){
     })
 
 }
-function addcomment(username:string,comment:string,post_Id:string){
-    return new Promise( async (resolve,reject)=>{
+function addcomment(username:string,comment:string,post_Id:string): Promise<string>{
+    return new Promise( async (resolve,reject): Promise<void>=>{
         try {
             const pushcomment = await db.storeComment(username,comment,post_Id)
             if(pushcomment === 'true'){
@@ -119,11 +119,11 @@ function addcomment(username:string,comment:string,post_Id:string){
         }
     })
 }
-function addLike(username:string,post_Id:string,like:boolean){
+function addLike(username:string,post_Id:string,like:boolean): Promise<string>{
     return new Promise(async(resolve,reject) =>{
         try {
             await db.storeLikes(username,post_Id,like)
-            .then((succ:string)=>{
+            .then((succ:string): void =>{
                 if(succ === 'liked'){
                     resolve('true')
                 }
@@ -134,14 +134,14 @@ function addLike(username:string,post_Id:string,like:boolean){
     })
 }
 
-function unfollowerUser(username:string,tounfollow:string){
-    return new Promise(async (resolve,reject)=>{
+function unfollowerUser(username:string,tounfollow:string): Promise<string>{
+    return new Promise(async (resolve,reject):Promise<void> =>{
         try {
             await db.removefollower(username,tounfollow).then((success:string)=>{
                 if(success){
                     resolve('true')
                 }
-            }).catch((failure:string)=>{
+            }).catch((failure:string): void =>{
                 reject(failure)
             })
         } catch (error) {
@@ -150,14 +150,14 @@ function unfollowerUser(username:string,tounfollow:string){
         }
     })
 }
-function makeUpdate(post_Id:string,title:string,body:string,summary:string,username:string){
-    return new Promise(async (resolve,reject)=>{
+function makeUpdate(post_Id:string,title:string,body:string,summary:string,username:string): Promise<string> {
+    return new Promise(async (resolve,reject): Promise<void> =>{
         try {
-            await db.storeUpdatedPost(post_Id,title,body,summary,username).then((success:string)=>{
+            await db.storeUpdatedPost(post_Id,title,body,summary,username).then((success:string):void =>{
                 if(success === 'updated'){
                     resolve('true')
                 }
-            }).catch((failure:string)=>{
+            }).catch((failure:string): void =>{
                 reject(failure)
             })
         } catch (error) {
@@ -166,14 +166,14 @@ function makeUpdate(post_Id:string,title:string,body:string,summary:string,usern
         }
     })
 }
-function removePostData(username:string,posrt_Id:string){
-    return new Promise(async (resolve,reject) =>{
+function removePostData(username:string,posrt_Id:string): Promise<string>{
+    return new Promise(async (resolve,reject): Promise<void> =>{
         try {
-            await db.removePostedData(username,posrt_Id).then((success:string)=>{
+            await db.removePostedData(username,posrt_Id).then((success:string):void =>{
                 if(success === 'true'){
                     resolve('Post deleted')
                 }
-            }).catch((failure:string)=>{
+            }).catch((failure:string):void =>{
                 if(failure === 'false'){
                     reject('Post not found or Invalid post Id ')
                 }else{
@@ -185,14 +185,14 @@ function removePostData(username:string,posrt_Id:string){
         }
     })
 }
-function removeLike(username:string,post_Id:string){
-    return new Promise(async (resolve,reject)=>{
+function removeLike(username:string,post_Id:string): Promise<string>{
+    return new Promise(async (resolve,reject): Promise<void>=>{
         try {
-            await db.removestoredlike(username,post_Id).then((success:string)=>{
+            await db.removestoredlike(username,post_Id).then((success:string): void =>{
                 if(success === 'true'){
                     resolve(success)
                 }
-            }).catch((failure:string)=>{
+            }).catch((failure:string): void =>{
                 if(failure === 'false'){
                     reject("Post not found or Invalid post id")
                 }else{
@@ -205,14 +205,14 @@ function removeLike(username:string,post_Id:string){
         }
     })
 }
-function pushupdatedComment(comment:string|number,username:string,post_Id:string,commentId:number){
-    return new Promise (async (resolve,reject)=>{
+function pushupdatedComment(comment:string|number,username:string,post_Id:string,commentId:number): Promise<string> {
+    return new Promise (async (resolve,reject): Promise<void> =>{
         try {
-            await db.storeUpdatedcomment(comment,username,post_Id,commentId).then((success:string)=>{
+            await db.storeUpdatedcomment(comment,username,post_Id,commentId).then((success:string): void =>{
                 if(success === 'true'){
                     resolve(success)
                 }
-            }).catch((failure:string)=>{
+            }).catch((failure:string): void =>{
                 if(failure === 'false'){
                     reject('Invalid post Id or comment Id')
                 }else{
@@ -227,11 +227,11 @@ function pushupdatedComment(comment:string|number,username:string,post_Id:string
 function deleteCommentData(username:string,commentId:number) : Promise<string>{
     return new Promise(async (resolve,reject) : Promise<void> =>{
         try {
-            await db.deleteStoredComment(username,commentId).then((success:string)=>{
+            await db.deleteStoredComment(username,commentId).then((success:string): void=>{
                 if(success ===  'true'){
                     resolve(success)
                 }
-            }).catch((failure:string)=>{
+            }).catch((failure:string): void =>{
                 if(failure === 'false'){
                     reject('comment not found or Invalid comment Id')
                 }else{

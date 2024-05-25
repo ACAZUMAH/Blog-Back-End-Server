@@ -157,7 +157,7 @@ This project provides the back-end infrastructure for a blog platform where user
     - Endpoint: GET /blog/view-post/comments?post_Id=
   
   - **Delete a comment**:
-    -Endpoint: DELETE /blog/delete-comment?username={username}&comment_Id={comment_Id}
+    - Endpoint: DELETE /blog/delete-comment?username={username}&comment_Id={comment_Id}
 
 
 ### Follow Management

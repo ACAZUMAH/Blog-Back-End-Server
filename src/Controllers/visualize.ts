@@ -11,6 +11,11 @@ type general = {
     summary:string  
     date: string | number
 }
+type user = {
+    username:string,
+    email:string,
+    userpasswords:string
+}
 type profile = {
     name:string,
     username:string
@@ -22,6 +27,13 @@ type following = {
 type followers ={
     followers: number 
 }
+type profileinfo = {
+    name: string,
+    username: string,
+    email: string,
+    followers: number,
+    following: number
+}
 type comment ={
     comment_Id:string
     username: string,
@@ -31,18 +43,18 @@ type comment ={
 type likes ={
     likes: number
 }
-function sortPostByDate(postArr:general[]){
-    postArr.sort((a,b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+function sortPostByDate(postArr:general[]): general[]{
+    postArr.sort((a,b):number => new Date(b.date).getTime() - new Date(a.date).getTime())
     postArr.forEach(post => post.date = new Date(post.date).toString())
     return postArr
 }
-function sortComments(comments:comment[]){
-    comments.sort((a,b) => new Date(b.comment_date).getTime() - new Date(a.comment_date).getTime())
+function sortComments(comments:comment[]): comment[]{
+    comments.sort((a,b):number => new Date(b.comment_date).getTime() - new Date(a.comment_date).getTime())
     comments.forEach(comment => comment.comment_date = new Date(comment.comment_date).toString())
     return comments
 }
-function getUserProfile(username:string){
-    return new Promise(async (resolve,reject) =>{
+function getUserProfile(username:string):Promise<profileinfo>{
+    return new Promise(async (resolve,reject): Promise<void> =>{
         try {
             const userInfo:profile[] = await data.fetchProfile(username)
             const followersinfo:followers[] = await data.fetchfollowers(username)
@@ -60,8 +72,8 @@ function getUserProfile(username:string){
         }
     })
 }
-function allUsers(){
-    return new Promise(async (resolve,reject) =>{
+function allUsers():Promise<user[]>{
+    return new Promise(async (resolve,reject):Promise<void> =>{
         try {
             const users = await data.fetchAllUsers()
             resolve(users)
@@ -70,8 +82,8 @@ function allUsers(){
         }
     })
 }
-function returnAllPost(){
-    return new Promise(async (resolve,reject) =>{
+function returnAllPost(): Promise<general[]>{
+    return new Promise(async (resolve,reject):Promise<void> =>{
         try{
             const post = await data.fetchAllPost()
             const sortedByDate = sortPostByDate(post)
@@ -81,8 +93,8 @@ function returnAllPost(){
         }
     })
 }
-function returnPostbyUsername(username:string){
-    return new Promise(async (resolve,reject) =>{
+function returnPostbyUsername(username:string):Promise<general[]>{
+    return new Promise(async (resolve,reject):Promise<void> =>{
         try {
             await data.postOfUser(username)
             .then((post:general[])=>{
@@ -96,8 +108,8 @@ function returnPostbyUsername(username:string){
         }
     })
 }
-function Post(post_Id:string){
-    return new Promise(async (resolve,reject)=>{
+function Post(post_Id:string): Promise<general[]>{
+    return new Promise(async (resolve,reject):Promise<void>=>{
         try {
             const post = sortPostByDate(await data.fetchPost(post_Id))
             resolve(post)
@@ -106,8 +118,8 @@ function Post(post_Id:string){
         }
     })
 }
-function returnPostComments(post_Id:string){
-    return new Promise(async (resolve,reject)=>{
+function returnPostComments(post_Id:string): Promise<comment[]>{
+    return new Promise(async (resolve,reject):Promise<void> =>{
         try {
             const comments = sortComments(await data.fetchCommentsOfApost(post_Id))
             resolve(comments)
@@ -116,8 +128,8 @@ function returnPostComments(post_Id:string){
         }
     })
 }
-function returnLikes(post_Id:string){
-    return new Promise(async (resolve,reject)=>{
+function returnLikes(post_Id:string): Promise<likes[]>{
+    return new Promise(async (resolve,reject): Promise<void>=>{
         try {
             const likes:likes[] = await data.fetchLikesOfpost(post_Id)
             resolve(likes)

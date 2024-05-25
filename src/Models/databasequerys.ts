@@ -1,4 +1,4 @@
-import { Console } from "console"
+import { Console, profile } from "console"
 
 const mysql = require('mysql')
 const { v4: uuidv4 } = require('uuid')
@@ -19,7 +19,7 @@ type user = {
     email:string,
     userpasswords:string
 }
-type profile = {
+type userprofile = {
     name:string,
     username:string
     email:string 
@@ -51,7 +51,7 @@ type likes ={
     likes: number
 }
 function check(): Promise<user[]>{
-    return new Promise((resolve,reject) =>{
+    return new Promise((resolve,reject): void =>{
         con.query('SELECT username,email,userpasswords FROM users', (error:string, results:user[], fields) =>{
             if(error){
                 console.log(error)
@@ -74,7 +74,7 @@ function createAcc(name:string,user_name:string,email:string,pass:string):Promis
                 }
                 const command = `INSERT INTO users (name,username,email,userpasswords) VALUES ( ?, ?, ?, ? )`
                 const values = [name, user_name, email, pass]
-                con.query(command,(error:any, result:user)=>{
+                con.query(command,(error:any, result:user): void =>{
                     if(error){
                         console.log(error)
                     }else{
@@ -89,7 +89,7 @@ function createAcc(name:string,user_name:string,email:string,pass:string):Promis
     
 } 
 
-function fetchPass(email:string){
+function fetchPass(email:string):Promise<string>{
     return new Promise(async (resolve,reject):Promise<void> =>{
         try {
             const fetchedData:user[] = await check()
@@ -107,44 +107,48 @@ function fetchPass(email:string){
     })
 }
 
-function fetchAllUsers(){
-    return new Promise((resolve,reject) =>{
+function fetchAllUsers(): Promise<{name:string,username:string}[]>{
+    return new Promise((resolve,reject): void =>{
         try {
             const query = `SELECT name,username FROM users LIMIT 50`
-            con.query(query, (error:any,result:{name:string,username:string}[], fields)=>{
-                if(error){
-                    console.log(error)
-                }
-                resolve(result)
-            })
+            setTimeout((): void =>{
+                con.query(query, (error:any,result:{name:string,username:string}[], fields)=>{
+                    if(error){
+                        console.log(error)
+                    }
+                    resolve(result)
+                })
+            }, 1000)
         } catch (error) {
             console.log(error)
         }
     })
 }
 
-function fetchProfile(username:string){
-    return new Promise(async (resolve,reject)=>{
+function fetchProfile(username:string):Promise<userprofile[]>{
+    return new Promise(async (resolve,reject): Promise<void>=>{
         try {
             const user_id = await get_ids(username)
             const Id = user_id.map(id => id.user_Id)
             if(Id && Id.length > 0 && Id[0] !== undefined){
                 const query = `SELECT name,username,email FROM users WHERE user_Id = ? `
                 const value = [Id[0]]
-                con.query(query, value, (error:any,results:profile[],fields)=>{
-                    if(error){
-                       console.log(error)
-                    }
-                    resolve(results)
-                })
+                setTimeout((): void =>{
+                    con.query(query, value, (error:any,results:userprofile[],fields):void =>{
+                        if(error){
+                           console.log(error)
+                        }
+                        resolve(results)
+                    })
+                },1000)
             }
         } catch (error) {
             console.log(error)
         }
     })
 }
-function fetchfollowers(username:string){
-    return new Promise(async (resolve,reject)=>{
+function fetchfollowers(username:string): Promise<followers[]>{
+    return new Promise(async (resolve,reject): Promise<void> =>{
         try {
             const user_id = await get_ids(username)
             const Id = user_id.map(id => id.user_Id)
@@ -153,20 +157,22 @@ function fetchfollowers(username:string){
                 FROM follows 
                 WHERE follows.following = ?`
                 const value = [Id[0]]
-                con.query(query,value, (error:any,results:followers[],fields)=>{
-                    if(error){
-                        console.log(error)
-                    }
-                    resolve(results)
-                })
+                setTimeout((): void =>{
+                    con.query(query,value, (error:any,results:followers[],fields): void =>{
+                        if(error){
+                            console.log(error)
+                        }
+                        resolve(results)
+                    })
+                },1000)
             }
         } catch (error) {
             console.log(error)
         }
     })
 }
-function returnfollowing(username:string){
-    return new Promise(async (resolve,reject)=>{
+function returnfollowing(username:string): Promise<following[]>{
+    return new Promise(async (resolve,reject): Promise<void> =>{
         try {
             const user_id = await get_ids(username)
             const Id = user_id.map(id => id.user_Id)
@@ -175,12 +181,14 @@ function returnfollowing(username:string){
                 FROM follows 
                 WHERE follows.user = ?`
                 const value = [Id[0]]
-                con.query(query,value, (error:any,results:following[],fields)=>{
-                    if(error){
-                        console.log(error)
-                    }
-                    resolve(results)
-                })
+               setTimeout((): void =>{
+                    con.query(query,value, (error:any,results:following[],fields): void =>{
+                        if(error){
+                            console.log(error)
+                        }
+                        resolve(results)
+                    })
+                },1000)
             }
         } catch (error) {
             console.log(error)
@@ -189,15 +197,17 @@ function returnfollowing(username:string){
 }
 
 function get_ids(user_id:string): Promise<userid[]>{
-    return new Promise((resolve,reject)=>{
+    return new Promise((resolve,reject):void =>{
         try {
             const query = `SELECT user_Id FROM users WHERE username = ? `
-            con.query(query,[user_id], (error:any, result:userid[])=>{
-                if(error){
-                    console.log(error)
-                }
-                resolve(result)
-            })
+            setTimeout((): void =>{
+                con.query(query,[user_id], (error:any, result:userid[]):void =>{
+                    if(error){
+                        console.log(error)
+                    }
+                    resolve(result)
+                })
+            },1000)
         } catch (error) {
             console.log(error)
         }
@@ -205,7 +215,7 @@ function get_ids(user_id:string): Promise<userid[]>{
 }
 
 function storeFollowers(user_id:string, followId:string):Promise<string>{
-    return new Promise(async (resolve, reject) => {
+    return new Promise(async (resolve, reject): Promise<void> => {
         try {
             const userId: userid[] = await get_ids(user_id)
             const tofollowId: userid[] = await get_ids(followId)
@@ -213,14 +223,16 @@ function storeFollowers(user_id:string, followId:string):Promise<string>{
                 tofollowId && tofollowId.length > 0 && tofollowId[0].user_Id !== undefined){
                 const query = `INSERT INTO follows (user,following) VALUES ( ?, ?)`
                 const values = [userId[0].user_Id,tofollowId[0].user_Id]
-                con.query(query,values, (error:string,result:any)=>{
-                    if(error){
-                        console.log(error)
-                    }
-                    if(result.affectedRows){
-                        resolve('true')
-                    }
-                })
+                setTimeout((): void =>{
+                    con.query(query,values, (error:string,result:any): void =>{
+                        if(error){
+                            console.log(error)
+                        }
+                        if(result.affectedRows){
+                            resolve('true')
+                        }
+                    })
+                },1000)
             }else{
                 reject('user not found')
             }
@@ -229,8 +241,8 @@ function storeFollowers(user_id:string, followId:string):Promise<string>{
         }
     })
 }
-function getPostDataStored(title:string,body:string,summary:string,username:string){
-    return new Promise(async (resolve,reject) =>{
+function getPostDataStored(title:string,body:string,summary:string,username:string): Promise<string>{
+    return new Promise(async (resolve,reject): Promise<void> =>{
         try {
             const post_Id = uuidv4()
             const user_id:userid[] = await get_ids(username)
@@ -239,14 +251,16 @@ function getPostDataStored(title:string,body:string,summary:string,username:stri
                 const query = `INSERT INTO post(post_Id,title,body,summary,user_id)
                 VALUES ( ?, ?, ?, ?, ? )`
                 const values = [post_Id, title, body, summary, Id[0]]
-                con.query(query,values, (error:string,result:any)=>{
-                    if(error){
-                        console.log(error)
-                    }
-                    if(result.affectedRows){
-                        resolve('true')
-                    }
-                })
+                setTimeout((): void =>{
+                    con.query(query,values, (error:string,result:any): void =>{
+                        if(error){
+                            console.log(error)
+                        }
+                        if(result.affectedRows){
+                            resolve('true')
+                        }
+                    })
+                },1000)
             }else{
                 reject('This user does not have account')
             }
@@ -256,25 +270,27 @@ function getPostDataStored(title:string,body:string,summary:string,username:stri
     })
 }
 
-function fetchAllPost(){
-    return new Promise ((resolve,reject)=>{
+function fetchAllPost():Promise<post[]>{
+    return new Promise ((resolve,reject):void =>{
         try {
             const query = `SELECT post_Id,users.username,title,body,summary,date
                 FROM post,users
                 WHERE (post.user_Id = users.user_Id) `
-            con.query(query, (error:any,result:post[],fields)=>{
-                if(error){
-                    console.log(error)
-                }
-                resolve(result)
-            })
+            setTimeout(():void =>{
+                con.query(query, (error:any,result:post[],fields): void =>{
+                    if(error){
+                        console.log(error)
+                    }
+                    resolve(result)
+                })
+            },1000)
         } catch (error) {
             console.log(error)
         }
     })
 }
 function postOfUser(username:string):Promise<post[]>{
-    return new Promise(async (reslove,reject) =>{
+    return new Promise(async (reslove,reject): Promise<void> =>{
         try {
             const user_id:userid[] = await get_ids(username)
             const Id = user_id.map(id => id.user_Id)
@@ -282,12 +298,14 @@ function postOfUser(username:string):Promise<post[]>{
                 const query = `SELECT post_Id,users.username,title,body,summary,date
                 FROM post,users
                 WHERE post.user_Id = users.user_Id and post.user_Id = ? `
-                con.query(query,[Id[0]], (error:any,result:post[],fields)=>{
-                    if(error){
-                        console.log(error)
-                    }
-                    reslove(result)
-                })
+                setTimeout(():void =>{
+                    con.query(query,[Id[0]], (error:any,result:post[],fields): void =>{
+                        if(error){
+                            console.log(error)
+                        }
+                        reslove(result)
+                    })
+                },1000)
             }else{
                 reject('This user does not have account')
             }
@@ -298,38 +316,47 @@ function postOfUser(username:string):Promise<post[]>{
 
 }
 function fetchPost(post_Id:string):Promise<post[]>{
-    return new Promise((resolve,reject)=>{
-        const query = `SELECT post_Id,users.username,title,body,summary,date
+    return new Promise((resolve,reject): void =>{
+        try {
+            const query = `SELECT post_Id,users.username,title,body,summary,date
             FROM post,users
             WHERE post.user_Id = users.user_Id AND post.post_Id = ? `
-        con.query(query,[post_Id], (error:any,results:post[], fields)=>{
-            if(error){
-                console.log(error)
-            }
-            resolve(results)
-        })
+            setTimeout((): void =>{
+                con.query(query,[post_Id], (error:any,results:post[], fields): void =>{
+                    if(error){
+                        console.log(error)
+                    }
+                    resolve(results)
+                }) 
+            },1000)
+        } catch (error) {
+            console.log(error)
+        }
+        
     })
 } 
 function fetchCommentsOfApost(post_Id:string):Promise<comment[]>{
-    return new Promise((resolve,reject) =>{
+    return new Promise((resolve,reject): void =>{
         try {
             const query = `SELECT comment_Id,users.username,comment,comment_date 
             FROM comments,users 
             WHERE comments.user_Id = users.user_Id AND comments.post_Id = ? `
-            con.query(query, [post_Id], (error:any,results:comment[],fields)=>{
-                if(error){
-                    console.log(error)
-                }
-                resolve(results)
-            })
+            setTimeout((): void =>{
+                con.query(query, [post_Id], (error:any,results:comment[],fields): void =>{
+                    if(error){
+                        console.log(error)
+                    }
+                    resolve(results)
+                })
+            },1000)
         } catch (error) {
             console.log(error)
         }
     })
 }
 
-function storeComment(username:string,comment:string,post_Id:string){
-    return new Promise(async (resolve,reject) =>{
+function storeComment(username:string,comment:string,post_Id:string): Promise<string>{
+    return new Promise(async (resolve,reject): Promise<void> =>{
         try {
             const user_id:userid[] = await get_ids(username)
             const Id = user_id.map(id => id.user_Id)
@@ -337,14 +364,16 @@ function storeComment(username:string,comment:string,post_Id:string){
                 const query = `INSERT INTO comments(comment,post_ID,user_id)
                     VALUES ( ?, ?, ? )`
                 const values = [comment,post_Id,Id]
-                con.query(query,values, (error:any,result:any)=>{
-                    if(error){
-                        console.log(error)
-                    }
-                    if(result.affectedRows){
-                        resolve('true')
-                    }
-                })
+                setTimeout((): void =>{
+                    con.query(query,values, (error:any,result:any): void =>{
+                        if(error){
+                            console.log(error)
+                        }
+                        if(result.affectedRows){
+                            resolve('true')
+                        }
+                    })
+                }, 1000)
             }
         } catch (error) {
             console.log(error)
@@ -352,8 +381,8 @@ function storeComment(username:string,comment:string,post_Id:string){
     }) 
 }
 
-function storeLikes(username:string,post_Id:string,like:boolean){
-    return new Promise( async (resolve, reject) => {
+function storeLikes(username:string,post_Id:string,like:boolean): Promise<string>{
+    return new Promise( async (resolve, reject): Promise<void> => {
         try {
             let likenum:number = 0
             if(like){
@@ -364,12 +393,14 @@ function storeLikes(username:string,post_Id:string,like:boolean){
             if( Id[0] && Id.length > 0 && typeof Id[0] === "number"){
                 const query = `INSERT INTO likes (numberOfLikes,post_Id,user_Id) VALUES ( ?, ?, ?)`
                 const values = [likenum,post_Id,Id[0]]
-                con.query(query,values, (error:any,results:any,fields)=>{
-                    if(error){
-                        console.log(error)
-                    }
-                    resolve('liked')
-                })
+                setTimeout((): void =>{
+                    con.query(query,values, (error:any,results:any,fields): void =>{
+                        if(error){
+                            console.log(error)
+                        }
+                        resolve('liked')
+                    })
+                }, 1000)
             }
         } catch (error) {
            console.log(error) 
@@ -377,24 +408,26 @@ function storeLikes(username:string,post_Id:string,like:boolean){
     })
 }
 
-function fetchLikesOfpost(post_Id:string){
-    return new Promise((resolve,reject) =>{
+function fetchLikesOfpost(post_Id:string): Promise<likes[]> {
+    return new Promise((resolve,reject): void =>{
         try {
             const query = `SELECT COUNT(like_Id) As likes FROM likes WHERE likes.post_Id = ? `
-            con.query(query,[post_Id],(error:any,results:likes[],fields)=>{
-                if(error){
-                    console.log(error)
-                }
-                resolve(results)
-            })
+            setTimeout((): void =>{
+                con.query(query,[post_Id],(error:any,results:likes[],fields):void =>{
+                    if(error){
+                        console.log(error)
+                    }
+                    resolve(results)
+                })
+            },1000)
         } catch (error) {
             console.log(error)
         }
     })
 }
 
-function removefollower(username:string,tounfollow:string){
-    return new Promise( async (resolve,reject)=>{
+function removefollower(username:string,tounfollow:string): Promise<string>{
+    return new Promise( async (resolve,reject): Promise<void> =>{
         try {
             const userId: userid[] = await get_ids(username)
             const tounfollowId: userid[] = await get_ids(tounfollow)
@@ -402,14 +435,16 @@ function removefollower(username:string,tounfollow:string){
                 tounfollowId && tounfollowId.length > 0 && tounfollowId[0].user_Id !== undefined){
                 const query = `DELETE FROM follows WHERE 
                 follows.user = ? AND follows.following = ? `
-                con.query(query,[userId[0].user_Id,tounfollowId[0].user_Id], (error:any,result:any)=>{
-                    if(error){
-                        console.log(error)
-                    }
-                    if(result.affectedRows > 0){
-                        resolve('true')
-                    }
-                })
+                setTimeout((): void =>{
+                    con.query(query,[userId[0].user_Id,tounfollowId[0].user_Id], (error:any,result:any): void =>{
+                        if(error){
+                            console.log(error)
+                        }
+                        if(result.affectedRows > 0){
+                            resolve('true')
+                        }
+                    })
+                },1000)
             }else{
                 reject('User not found or Invalid username')
             }
@@ -418,24 +453,27 @@ function removefollower(username:string,tounfollow:string){
         }
     })
 }
-function storeUpdatedPost(post_Id:string,title:string,body:string,summary:string,username:string){
-    return new Promise(async(resolve,reject) =>{
+function storeUpdatedPost(post_Id:string,title:string,body:string,summary:string,username:string): Promise<string>{
+    return new Promise(async(resolve,reject): Promise<void> =>{
         try {
             const userId: userid[] = await get_ids(username)
             if(userId && userId.length > 0 && userId[0].user_Id !== undefined){
                 const query = `UPDATE post SET title = ?, body = ?, summary =? 
                 WHERE post.post_Id = ? AND post.user_Id =? `
                 const values = [title,body,summary,post_Id,userId[0]]
-                con.query(query,values, (error:any, result:any)=>{
-                    if(error){
-                        console.log(error)
-                    }
-                    if(result.affectedRows > 0){
-                        resolve('updated')
-                    }else{
-                        reject('post ID not found Or Invalid post ID')
-                    }
-                })
+                setTimeout((): void =>{
+                    con.query(query,values, (error:any, result:any): void =>{
+                        if(error){
+                            console.log(error)
+                        }
+                        if(result.affectedRows > 0){
+                            resolve('updated')
+                        }else{
+                            reject('post ID not found Or Invalid post ID')
+                        }
+                    })
+                },1000)
+                
             }else{
                 reject('user not found or Invelid username ')
             }
@@ -444,15 +482,15 @@ function storeUpdatedPost(post_Id:string,title:string,body:string,summary:string
         }
     })
 }
-function removePostedData(username:string,post_Id:string){
+function removePostedData(username:string,post_Id:string): Promise<string>{
     return new Promise(async (resolve,reject) : Promise<void> =>{
         try {
             const userId: userid[] = await get_ids(username)
             if(userId && userId.length > 0 && userId[0].user_Id !== undefined){
                 const query = `DELETE FROM post WHERE post_Id = ? AND user_Id = ?`
                 const values = [post_Id, userId[0].user_Id]
-                setTimeout(()=>{
-                    con.query(query,values, (error:any, results:any)=>{
+                setTimeout((): void =>{
+                    con.query(query,values, (error:any, results:any): void =>{
                         if(error){
                             console.log(error)
                         }
@@ -478,8 +516,8 @@ function removestoredlike(username:string,post_Id:string): Promise<string>{
             if(userId && userId.length > 0 && userId[0].user_Id !== undefined){
                 const query = `DELETE FROM likes WHERE post_Id = ? AND user_Id = ? `
                 const values = [post_Id,userId[0].user_Id]
-                setTimeout(()=>{
-                    con.query(query,values, (error:any,result:any)=>{
+                setTimeout((): void =>{
+                    con.query(query,values, (error:any,result:any): void =>{
                         if(error){
                             console.log(error)
                         }
@@ -507,8 +545,8 @@ function storeUpdatedcomment(comment:string|number,username:string, post_Id:stri
                 const query = `UPDATE comments SET comment = ? 
                 WHERE post_Id = ? and user_Id = ? and comment_Id = ? `
                 const values = [comment,post_Id,userId[0].user_Id,comment_Id]
-                setTimeout(()=>{
-                    con.query(query,values, (error:any,result:any)=>{
+                setTimeout((): void =>{
+                    con.query(query,values, (error:any,result:any): void =>{
                         if(error){
                             console.log(error)
                         }
@@ -535,8 +573,8 @@ function deleteStoredComment(username:string, commentId:number): Promise<string>
                 const query = `DELETE FROM comments
                     WHERE comments.comment_Id = ? AND comments.user_Id = ? `
                 const values = [commentId, userId[0].user_Id]
-                setTimeout(()=>{
-                    con.query(query,values, (error:any,result:any)=>{
+                setTimeout((): void =>{
+                    con.query(query,values, (error:any,result:any): void =>{
                         if(error){
                             console.log(error)
                         }
