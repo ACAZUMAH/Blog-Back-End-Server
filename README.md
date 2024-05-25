@@ -38,8 +38,12 @@ This project provides the back-end infrastructure for a blog platform where user
 
 
 3. **Set Up the Database**:
-   - Make sure you have PostgreSQL installed and running.
+   - Make sure you have MySQL installed and running.
    - Create a new database for the project.
+   - Set up your database URL in the environment variables. Create a `.env` file in the root directory and add the following:
+     ```
+     DATABASE_URL=your-database-url
+     ```
 
 
 4. **Run Migrations**:
@@ -159,6 +163,28 @@ This project provides the back-end infrastructure for a blog platform where user
   - **Delete a comment**:
     - Endpoint: DELETE /blog/delete-comment?username={username}&comment_Id={comment_Id}
 
+### User Management 
+  - **Update profile name**:
+    - EndPoint: PATCH /blog/update/profile-name?username={username}
+    - Request Body:
+      ```json
+      {
+        "name": "new name",
+        "email": "your email",
+        "password": "your password"
+      }
+      ```
+
+  - **Update email**:
+    - EndPoint: PATCH /blog/update/email?username={username}
+    - Request Body:
+      ```json
+      {
+        "old email": "old email",
+        "new email": "new email",
+        "password": "your Password"
+      }
+      ``` 
 
 ### Follow Management
   - **Follow a User**:

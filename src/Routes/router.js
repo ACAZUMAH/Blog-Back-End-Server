@@ -9,6 +9,7 @@ const { Post,
         getUserProfile,
         returnLikes } = require('../Controllers/visualize.js')
 const { write } = require('fs')
+const { Console } = require('console')
 
 async function handleAccountCreation(req,res){
     try {
@@ -59,7 +60,7 @@ async function handleLogin(req,res){
         }
     }catch(rej){
         res.writeHead(404, {"content-type": "application/json"})
-        res.end(JSON.stringify(rej))
+        res.end(JSON.stringify({ "message": rej }))
     }
 
 }
@@ -343,6 +344,40 @@ async function deleteComment(req,res,username,commentId){
         res.end(JSON.stringify({"message": error}))
     }
 }
+async function updateprofile(req,res,username){
+    try {
+        const data = await getPostData(req)
+        const { name,email,password } = JSON.parse(data)
+        const  update = await dbcontrol.pushupdatedInfo(name,email,password,username)
+        if(update === 'true'){
+            return returnProfileInfo(req,res,username)
+        }else{
+            res.writeHead(404,{"content-type": "application/json"})
+            res.end(JSON.stringify({"message": update}))
+        }
+    } catch (error) {
+        res.writeHead(404,{"content-type": "application/json"})
+        res.end(JSON.stringify({"message": error}))
+    }
+}
+async function updateEmail(req,res,username){
+    try {
+        const data = await getPostData(req)
+        const { oldEmail, newEmail, password } = JSON.parse(data)
+        const update = await dbcontrol.pushUpdatedEmail(oldEmail,newEmail,password,username)
+        //Console.log(update)
+        if(update === 'true'){
+            res.writeHead(201, {"content-type": "applicaiotn/json"})
+            res.end(JSON.stringify({"message": "updated"}))
+        }else{
+            res.writeHead(404,{"content-type": "application/json"})
+            res.end(JSON.stringify({"message": update}))
+        }
+    } catch (error) {
+        res.writeHead(404,{"content-type": "application/json"})
+        res.end(JSON.stringify({"message": error}))
+    }
+}
 module.exports = { 
     handleAccountCreation,
     returnProfileInfo,
@@ -362,5 +397,7 @@ module.exports = {
     deletePost,
     unlikePost,
     updateComment,
-    deleteComment
+    deleteComment,
+    updateprofile,
+    updateEmail
 }

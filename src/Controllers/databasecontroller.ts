@@ -45,19 +45,20 @@ function checkUser(email:string, password:string): Promise<string> {
     return new Promise(async (resolve,reject): Promise<void> =>{
         try{
             const hashpass = await db.fetchPass(email)
-            if(hashpass){
+            if(hashpass !== 'Email not found'){
                 const match = await bcrypt.compare(password,hashpass)
                 if(match){
                     resolve('true')
                 }else{
                     resolve('false')
                 }
+            }else{
+                reject(hashpass)
             }
         }catch(rej){
             reject(rej)
         }
     })
-
 }
 function login(email:string, password:string): Promise<string>{
     return new Promise(async (resolve,reject): Promise<void> =>{
@@ -74,6 +75,53 @@ function login(email:string, password:string): Promise<string>{
             }
         }
         //console.log(validate)
+    })
+}
+function pushupdatedInfo(name:string,email:string,password:string,username:string):Promise<String>{
+    return new Promise(async (resolve,reject):Promise<void> =>{
+        try {
+            const validatePass = await checkUser(email,password)
+            if(validatePass === 'true'){
+                await db.storeUpdatedUserInfo(name,username).then((success:string):void =>{
+                    if(success == 'true'){
+                        resolve(success)
+                    }
+                }).catch((failure:string): void =>{
+                    if(failure === 'false'){
+                        reject("Invalid username couldn't update profile")        
+                    }
+                })
+            }else{
+               reject('Invalid email or password')
+            }
+        } catch (error) {
+            reject(error) 
+            //console.log(error)
+        }
+    })
+}
+function pushUpdatedEmail(oldEmail:string, newEmail:string, password: string, username: string): Promise<string>{
+    return new Promise(async (resolve,reject): Promise<void> =>{
+        try {
+            const validate = await checkUser(oldEmail,password)
+            if(validate === 'true'){
+                await db.storeUpdatedEmail(username,newEmail).then((success:string):void =>{
+                    if(success === 'true'){
+                        resolve(success)
+                    }
+                }).catch((failure:string):void =>{
+                    if(failure === 'false'){
+                        reject("Invalid username couldn't update email")
+                    }
+                })
+            }else{
+                reject('Invalid email or password')
+            }
+        } catch (error) {
+            reject(error)
+            //console.log(error)
+        }
+
     })
 }
 function addFollowers(user:string, userTofollow:string): Promise<string>{
@@ -265,5 +313,7 @@ module.exports = {
     removePostData,
     removeLike,
     pushupdatedComment,
-    deleteCommentData
+    deleteCommentData,
+    pushupdatedInfo,
+    pushUpdatedEmail
 }

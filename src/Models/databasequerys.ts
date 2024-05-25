@@ -1,4 +1,5 @@
 import { Console, profile } from "console"
+import { resolve } from "path"
 
 const mysql = require('mysql')
 const { v4: uuidv4 } = require('uuid')
@@ -102,7 +103,7 @@ function fetchPass(email:string):Promise<string>{
             }
             reject('Email not found')
         } catch (error) {
-            
+            console.log(error)
         }
     })
 }
@@ -593,6 +594,51 @@ function deleteStoredComment(username:string, commentId:number): Promise<string>
         }
     })
 }
+
+function storeUpdatedUserInfo(name:string,username:string):Promise<string>{
+    return new Promise((resolve,reject):void =>{
+        try {
+            const query = `UPDATE users SET name = ? WHERE username = ?`
+            const values = [name, username]
+            setTimeout((): void =>{
+                con.query(query,values, (error:any,results:any): void =>{
+                    if(error){
+                        console.log(error)
+                    }
+                    if(results.affectedRows > 0){
+                        resolve("true")
+                    }else{
+                        reject('false')
+                    }
+                })
+            }, 1000)
+        } catch (error) {
+            console.log(error)
+        }
+    })
+}
+function storeUpdatedEmail(ussername:string, newEmail:string): Promise<string>{
+    return new Promise((resolve,reject): void =>{
+        try {
+            const query = `UPDATE users SET email = ? WHERE username = ? `
+            const values = [newEmail,ussername]
+            setTimeout((): void =>{
+                con.query(query,values, (error:any, result:any): void =>{
+                    if(error){
+                        console.log(error)
+                    }
+                    if(result.affectedRows > 0){
+                        resolve('true')
+                    }else{
+                        reject('false')
+                    }
+                })
+            },1000)
+        } catch (error) {
+            console.log(error)
+        }
+    })
+}
 module.exports = {
     createAcc,
     fetchPass,
@@ -614,5 +660,7 @@ module.exports = {
     removePostedData,
     removestoredlike,
     storeUpdatedcomment,
-    deleteStoredComment
+    deleteStoredComment,
+    storeUpdatedUserInfo,
+    storeUpdatedEmail
 } 

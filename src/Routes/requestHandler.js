@@ -18,7 +18,9 @@ const {
     deletePost,
     unlikePost,
     updateComment,
-    deleteComment } = require('./router')
+    deleteComment,
+    updateprofile,
+    updateEmail } = require('./router')
 
 function handlePostRequest(req, res){
     const pathname = req.url
@@ -135,6 +137,16 @@ function handlePatchRequest(req,res){
         post_Id = queryparam.post_Id
         username = queryparam.username
         return updatepart(req,res,username,post_Id)
+    // enpoint for updating profile name
+    }else if(pathname.match(/\/blog\/update\/profile-name\?username=([0-9a-zA-Z]+)/)){
+        const queryparam = querystring.parse(pathname.split('?')[1])
+        username = queryparam.username
+        return updateprofile(req,res,username)
+    // enpoint for updating email
+    }else if(pathname.match(/\/blog\/update\/email\?username=([0-9a-zA-Z]+)/)){
+        const queryparam = querystring.parse(pathname.split('?')[1])
+        username = queryparam.username
+        return updateEmail(req,res,username)
     }else{
         res.writeHead(400,{ "content-type": "application/json"})
         res.end(JSON.stringify({"Bad Request": "unrecognized request path"}))

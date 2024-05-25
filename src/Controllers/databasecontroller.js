@@ -42,7 +42,7 @@ function checkUser(email, password) {
     return new Promise(async (resolve, reject) => {
         try {
             const hashpass = await db.fetchPass(email);
-            if (hashpass) {
+            if (hashpass !== 'Email not found') {
                 const match = await bcrypt.compare(password, hashpass);
                 if (match) {
                     resolve('true');
@@ -50,6 +50,9 @@ function checkUser(email, password) {
                 else {
                     resolve('false');
                 }
+            }
+            else {
+                reject(hashpass);
             }
         }
         catch (rej) {
@@ -74,6 +77,56 @@ function login(email, password) {
             }
         }
         //console.log(validate)
+    });
+}
+function pushupdatedInfo(name, email, password, username) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const validatePass = await checkUser(email, password);
+            if (validatePass === 'true') {
+                await db.storeUpdatedUserInfo(name, username).then((success) => {
+                    if (success == 'true') {
+                        resolve(success);
+                    }
+                }).catch((failure) => {
+                    if (failure === 'false') {
+                        reject("Invalid username couldn't update profile");
+                    }
+                });
+            }
+            else {
+                reject('Invalid email or password');
+            }
+        }
+        catch (error) {
+            reject(error);
+            //console.log(error)
+        }
+    });
+}
+function pushUpdatedEmail(oldEmail, newEmail, password, username) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const validate = await checkUser(oldEmail, password);
+            if (validate === 'true') {
+                await db.storeUpdatedEmail(username, newEmail).then((success) => {
+                    if (success === 'true') {
+                        resolve(success);
+                    }
+                }).catch((failure) => {
+                    if (failure === 'false') {
+                        reject("Invalid username couldn't update email");
+                    }
+                });
+            }
+            else {
+                reject('Invalid email or password');
+            }
+        }
+        catch (error) {
+            reject(error);
+            //console.log(error)
+        }
     });
 }
 function addFollowers(user, userTofollow) {
@@ -276,5 +329,7 @@ module.exports = {
     removePostData,
     removeLike,
     pushupdatedComment,
-    deleteCommentData
+    deleteCommentData,
+    pushupdatedInfo,
+    pushUpdatedEmail
 };
