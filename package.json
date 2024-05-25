@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "start": "npm run tsc && node server.js",
-    "dev": "node_modules/nodemon/bin/nodemon.js -e ts  --exec \"tsc && node server.js\"",
+    "dev": "nodemon server.js",
     "tsc": "tsc"
   },
   "author": "",
@@ -15,6 +15,7 @@
     "@types/node": "^20.12.12",
     "concurrently": "^7.6.0",
     "nodemon": "^3.1.0",
+    "ts-node": "^10.9.2",
     "typescript": "^5.4.5"
   },
   "dependencies": {

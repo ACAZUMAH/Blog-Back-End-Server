@@ -4,12 +4,13 @@
         "allowJs": true,
         "target": "ES2017",
         "module": "CommonJS",
+        "rootDir": "./src",
         "strictNullChecks": true
     },
     "include": [
-        "Controllers/*.ts",
-        "Models/*.ts"
-, "index.ts", "Controllers/databasecontroller.ts", "Controllers/visualize.ts", "Models/databasequerys.ts"        ],
+        "src/Controllers/*.ts",
+        "src/Models/*.ts"
+, "index.ts", "src/Controllers/databasecontroller.ts", "src/Controllers/visualize.ts", "src/Models/databasequerys.ts"        ],
     "exclude": [
         "node_modules"
     ]

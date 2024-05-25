@@ -63,7 +63,6 @@ async function handleLogin(req,res){
     }
 
 }
-
 async function returnAllUsers(req,res){
     try {
         const users = await allUsers()
@@ -78,7 +77,6 @@ async function returnAllUsers(req,res){
         console.log(error)
     }
 }
-
 async function addfollow(req, res, user,userTofollow){
     try {
         const follow = await dbcontrol.addFollowers(user,userTofollow)
@@ -121,7 +119,6 @@ async function makeApost(req,res,username){
         console.log(error)
     }
 }
-
 async function returnUserPost(req,res,username){
     try {
         await returnPostbyUsername(username).then((userpost) =>{
@@ -141,7 +138,6 @@ async function returnUserPost(req,res,username){
         console.log(error)
     }
 }
-
 async function returnAllPosts(req,res){
     try {
         const postdata = await returnAllPost()
@@ -156,7 +152,6 @@ async function returnAllPosts(req,res){
         console.log(error)
     }
 }
-
 async function commentOnPost(req,res,username,post_Id){
     try {
         const comment_body = await getPostData(req)
@@ -181,7 +176,6 @@ async function commentOnPost(req,res,username,post_Id){
         console.log(error)
     }
 }
-
 async function likePost(req,res,username,post_Id,like){
     try {
         const likes = await dbcontrol.addLike(username,post_Id,like)
@@ -232,7 +226,6 @@ async function likes(req,res,post_Id){
         console.log(error)
     }
 }
-
 async function unfollow(req,res,username,tounfollow){
     try {
         const unfollowuser = await dbcontrol.unfollowerUser(username,tounfollow)
@@ -246,7 +239,6 @@ async function unfollow(req,res,username,tounfollow){
         res.end(JSON.stringify({ "message" : error }))
     }
 }
-
 async function updatePost(req,res,username,post_Id){
     try {
         const data = await getPostData(req)
@@ -264,7 +256,6 @@ async function updatePost(req,res,username,post_Id){
         res.end(JSON.stringify({"message": error}))
     }
 }
-
 async function updatepart(req,res,username,post_Id){
     try {
         const data = await getPostData(req)
@@ -321,7 +312,6 @@ async function unlikePost(req,res,username,post_Id){
        res.end(JSON.stringify({"message": error}))
     }
 }
-
 async function updateComment(req,res,username,post_Id,commentId){
     try {
         const data = await getPostData(req)
@@ -335,6 +325,21 @@ async function updateComment(req,res,username,post_Id,commentId){
         }
     } catch (error) {
         res.writeHead(404, {"content-type": "application/json"})
+        res.end(JSON.stringify({"message": error}))
+    }
+}
+async function deleteComment(req,res,username,commentId){
+    try {
+        const deletecomment = await dbcontrol.deleteCommentData(username,commentId)
+        if(deletecomment === 'true'){
+            res.writeHead(200, {"content0-type": "appliaction/json"})
+            res.end(JSON.stringify({"message": "comment Deleted"}))
+        }else{
+            res.writeHead(404,{"content-type": "application/json"})
+            res.end(JSON.stringify({"message": deletecomment}))
+        } 
+    } catch (error) {
+        res.writeHead(404,{"content-type": "application/json"})
         res.end(JSON.stringify({"message": error}))
     }
 }
@@ -356,5 +361,6 @@ module.exports = {
     updatepart,
     deletePost,
     unlikePost,
-    updateComment
+    updateComment,
+    deleteComment
 }

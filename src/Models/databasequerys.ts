@@ -90,7 +90,7 @@ function createAcc(name:string,user_name:string,email:string,pass:string):Promis
 } 
 
 function fetchPass(email:string){
-    return new Promise(async (resolve,reject) =>{
+    return new Promise(async (resolve,reject):Promise<void> =>{
         try {
             const fetchedData:user[] = await check()
             for (let i = 0; i < fetchedData.length; i++){
@@ -445,7 +445,7 @@ function storeUpdatedPost(post_Id:string,title:string,body:string,summary:string
     })
 }
 function removePostedData(username:string,post_Id:string){
-    return new Promise(async (resolve,reject)=>{
+    return new Promise(async (resolve,reject) : Promise<void> =>{
         try {
             const userId: userid[] = await get_ids(username)
             if(userId && userId.length > 0 && userId[0].user_Id !== undefined){
@@ -471,8 +471,8 @@ function removePostedData(username:string,post_Id:string){
         }
     })
 }
-function removestoredlike(username:string,post_Id:string){
-    return new Promise(async (resolve,reject)=>{
+function removestoredlike(username:string,post_Id:string): Promise<string>{
+    return new Promise(async (resolve,reject): Promise<void>=>{
         try {
             const userId: userid[] = await get_ids(username)
             if(userId && userId.length > 0 && userId[0].user_Id !== undefined){
@@ -499,14 +499,42 @@ function removestoredlike(username:string,post_Id:string){
     })
 }
 
-function storeUpdatedcomment(comment:string|number,username:string, post_Id:string,comment_Id:number){
-    return new Promise(async (resolve,reject)=>{
+function storeUpdatedcomment(comment:string|number,username:string, post_Id:string,comment_Id:number): Promise<string>{
+    return new Promise(async (resolve,reject): Promise<void> =>{
         try {
             const userId: userid[] = await get_ids(username)
             if(userId && userId.length > 0 && userId[0].user_Id !== undefined){
                 const query = `UPDATE comments SET comment = ? 
                 WHERE post_Id = ? and user_Id = ? and comment_Id = ? `
                 const values = [comment,post_Id,userId[0].user_Id,comment_Id]
+                setTimeout(()=>{
+                    con.query(query,values, (error:any,result:any)=>{
+                        if(error){
+                            console.log(error)
+                        }
+                        if(result.affectedRows > 0){
+                            resolve('true')
+                        }else{
+                          reject('false')
+                        }
+                    })
+                },1000)
+            }else{
+                reject('user not found or Invelid username ')
+            }
+        } catch (error) {
+            console.log(error)
+        }
+    })
+}
+function deleteStoredComment(username:string, commentId:number): Promise<string>{
+    return new Promise(async (resolve, reject): Promise<void> => {
+        try {
+            const userId: userid[] = await get_ids(username)
+            if(userId && userId.length > 0 && userId[0].user_Id !== undefined){
+                const query = `DELETE FROM comments
+                    WHERE comments.comment_Id = ? AND comments.user_Id = ? `
+                const values = [commentId, userId[0].user_Id]
                 setTimeout(()=>{
                     con.query(query,values, (error:any,result:any)=>{
                         if(error){
@@ -547,5 +575,6 @@ module.exports = {
     storeUpdatedPost,
     removePostedData,
     removestoredlike,
-    storeUpdatedcomment
+    storeUpdatedcomment,
+    deleteStoredComment
 } 

@@ -224,6 +224,26 @@ function pushupdatedComment(comment:string|number,username:string,post_Id:string
         }
     })
 }
+function deleteCommentData(username:string,commentId:number) : Promise<string>{
+    return new Promise(async (resolve,reject) : Promise<void> =>{
+        try {
+            await db.deleteStoredComment(username,commentId).then((success:string)=>{
+                if(success ===  'true'){
+                    resolve(success)
+                }
+            }).catch((failure:string)=>{
+                if(failure === 'false'){
+                    reject('comment not found or Invalid comment Id')
+                }else{
+                    reject(failure)
+                }
+            })
+        } catch (error) {
+            console.log(error)
+        }
+    })
+
+}
 /*async function test(mail:string,pass:string){
     try {
         const check = await checkUser(mail,pass)
@@ -244,5 +264,6 @@ module.exports = {
     makeUpdate,
     removePostData,
     removeLike,
-    pushupdatedComment
+    pushupdatedComment,
+    deleteCommentData
 }

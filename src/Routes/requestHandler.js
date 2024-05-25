@@ -17,7 +17,8 @@ const {
     updatepart,
     deletePost,
     unlikePost,
-    updateComment } = require('./router')
+    updateComment,
+    deleteComment } = require('./router')
 
 function handlePostRequest(req, res){
     const pathname = req.url
@@ -144,6 +145,7 @@ function handleDeleteRequest(req,res){
     const pathname = req.url
     let username 
     let post_Id 
+    //endpoint for unfollowing a user
     if(pathname.match(/blog\/unfollow\?username=([0-9a-zA-Z]+)&unfollow=(([0-9a-zA-Z]+))/)){
         const queryparam = querystring.parse(pathname.split('?')[1])
         username = queryparam.username
@@ -161,6 +163,12 @@ function handleDeleteRequest(req,res){
         username = queryparam.username
         post_Id = queryparam.post_Id
         return unlikePost(req,res,username,post_Id)
+    //endpoint for deleting a comment
+    }else if(pathname.match(/\/blog\/delete-comment\?username=([0-9a-z-A-Z]+)&comment_Id=([0-9]+)/)){
+        const queryparam = querystring.parse(pathname.split('?')[1])
+        username = queryparam.username
+        const commentId = queryparam.comment_Id
+        return deleteComment(req,res,username,commentId)
     }else{
         res.writeHead(400,{ "content-type": "application/json"})
         res.end(JSON.stringify({"Bad Request": "unrecognized request path"}))

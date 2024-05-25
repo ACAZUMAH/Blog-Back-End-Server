@@ -508,6 +508,37 @@ function storeUpdatedcomment(comment, username, post_Id, comment_Id) {
         }
     });
 }
+function deleteStoredComment(username, commentId) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const userId = await get_ids(username);
+            if (userId && userId.length > 0 && userId[0].user_Id !== undefined) {
+                const query = `DELETE FROM comments
+                    WHERE comments.comment_Id = ? AND comments.user_Id = ? `;
+                const values = [commentId, userId[0].user_Id];
+                setTimeout(() => {
+                    con.query(query, values, (error, result) => {
+                        if (error) {
+                            console.log(error);
+                        }
+                        if (result.affectedRows > 0) {
+                            resolve('true');
+                        }
+                        else {
+                            reject('false');
+                        }
+                    });
+                }, 1000);
+            }
+            else {
+                reject('user not found or Invelid username ');
+            }
+        }
+        catch (error) {
+            console.log(error);
+        }
+    });
+}
 module.exports = {
     createAcc,
     fetchPass,
@@ -528,5 +559,6 @@ module.exports = {
     storeUpdatedPost,
     removePostedData,
     removestoredlike,
-    storeUpdatedcomment
+    storeUpdatedcomment,
+    deleteStoredComment
 };

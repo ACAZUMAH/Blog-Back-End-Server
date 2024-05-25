@@ -234,6 +234,27 @@ function pushupdatedComment(comment, username, post_Id, commentId) {
         }
     });
 }
+function deleteCommentData(username, commentId) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            await db.deleteStoredComment(username, commentId).then((success) => {
+                if (success === 'true') {
+                    resolve(success);
+                }
+            }).catch((failure) => {
+                if (failure === 'false') {
+                    reject('comment not found or Invalid comment Id');
+                }
+                else {
+                    reject(failure);
+                }
+            });
+        }
+        catch (error) {
+            console.log(error);
+        }
+    });
+}
 /*async function test(mail:string,pass:string){
     try {
         const check = await checkUser(mail,pass)
@@ -254,5 +275,6 @@ module.exports = {
     makeUpdate,
     removePostData,
     removeLike,
-    pushupdatedComment
+    pushupdatedComment,
+    deleteCommentData
 };
