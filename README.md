@@ -149,7 +149,7 @@ This project provides the back-end infrastructure for a blog platform where user
       ```
 
   - **Update a comment**:
-    - Endpoint: `PUT /blog/update-comment?username={username}&post_Id={post_Id}`
+    - Endpoint: `PUT /blog/update-comment?username={username}&comment_Id={comment_Id}&post_Id={post_Id}`
     - Request Body:
       ```json
       {
