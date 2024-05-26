@@ -36,7 +36,7 @@ function createAcc(name, user_name, email, pass) {
                 }
                 const command = `INSERT INTO users (name,username,email,userpasswords) VALUES ( ?, ?, ?, ? )`;
                 const values = [name, user_name, email, pass];
-                con.query(command, (error, result) => {
+                con.query(command, values, (error, result) => {
                     if (error) {
                         console.log(error);
                     }
@@ -462,6 +462,16 @@ function removePostedData(username, post_Id) {
             if (userId && userId.length > 0 && userId[0].user_Id !== undefined) {
                 const query = `DELETE FROM post WHERE post_Id = ? AND user_Id = ?`;
                 const values = [post_Id, userId[0].user_Id];
+                con.query(`DELETE FROM comments WHERE post_Id  = ? `, [post_Id], (error) => {
+                    if (error) {
+                        console.log(error);
+                    }
+                });
+                con.query(`DELETE FROM likes WHERE likes.post_id = ? `, [post_Id], (error) => {
+                    if (error) {
+                        console.log(error);
+                    }
+                });
                 setTimeout(() => {
                     con.query(query, values, (error, results) => {
                         if (error) {

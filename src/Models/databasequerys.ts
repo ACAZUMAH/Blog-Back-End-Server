@@ -75,7 +75,7 @@ function createAcc(name:string,user_name:string,email:string,pass:string):Promis
                 }
                 const command = `INSERT INTO users (name,username,email,userpasswords) VALUES ( ?, ?, ?, ? )`
                 const values = [name, user_name, email, pass]
-                con.query(command,(error:any, result:user): void =>{
+                con.query(command,values,(error:any, result:user): void =>{
                     if(error){
                         console.log(error)
                     }else{
@@ -490,6 +490,16 @@ function removePostedData(username:string,post_Id:string): Promise<string>{
             if(userId && userId.length > 0 && userId[0].user_Id !== undefined){
                 const query = `DELETE FROM post WHERE post_Id = ? AND user_Id = ?`
                 const values = [post_Id, userId[0].user_Id]
+                con.query(`DELETE FROM comments WHERE post_Id  = ? `,[post_Id],(error:any): void =>{
+                    if (error){
+                        console.log(error)
+                    }
+                })
+                con.query(`DELETE FROM likes WHERE likes.post_id = ? `,[post_Id], (error:any): void =>{
+                    if(error){
+                        console.log(error)
+                    }
+                })
                 setTimeout((): void =>{
                     con.query(query,values, (error:any, results:any): void =>{
                         if(error){

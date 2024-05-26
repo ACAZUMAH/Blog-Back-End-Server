@@ -22,7 +22,7 @@ function handlePostRequest(req, res){
         username = queryparam.username
         const userTofollow = queryparam.follow 
         return route.addfollow(req, res, username, userTofollow)
-    // endpoint creating a comment 
+    // endpoint for creating a comment 
     }else if(pathname.match(/\/blog\/comment-on-post\?username=([0-9a-zA-Z]+)&post_Id=([0-9a-fA-F-]+)$/)){
         const queryparam = querystring.parse(pathname.split('?')[1])
         username = queryparam.username 
