@@ -2,12 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const bcrypt = require('bcrypt');
 const db = require('../Models/databasequerys');
-/*type usertype ={
-    name: string,
-    username: string,
-    email: string,
-    pass: string,
-}*/
 function hasPassword(user_password) {
     return new Promise((resolve, reject) => {
         const saltRounds = 10;
@@ -76,7 +70,6 @@ function login(email, password) {
                 reject(rej);
             }
         }
-        //console.log(validate)
     });
 }
 function pushupdatedInfo(name, email, password, username) {
@@ -308,6 +301,33 @@ function deleteCommentData(username, commentId) {
         }
     });
 }
+function removeAccount(email, password, username) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const validate = await checkUser(email, password);
+            if (validate === 'true') {
+                await db.removeAcountFromDb(email, username).then((success) => {
+                    if (success === 'true') {
+                        resolve(success);
+                    }
+                }).catch((failure) => {
+                    if (failure === 'false') {
+                        reject('Invalid username');
+                    }
+                    else {
+                        reject(failure);
+                    }
+                });
+            }
+            else {
+                reject("Invalid password");
+            }
+        }
+        catch (error) {
+            reject(error);
+        }
+    });
+}
 /*async function test(mail:string,pass:string){
     try {
         const check = await checkUser(mail,pass)
@@ -331,5 +351,6 @@ module.exports = {
     pushupdatedComment,
     deleteCommentData,
     pushupdatedInfo,
-    pushUpdatedEmail
+    pushUpdatedEmail,
+    removeAccount
 };

@@ -625,6 +625,66 @@ function storeUpdatedEmail(ussername, newEmail) {
         }
     });
 }
+function removeAcountFromDb(email, username) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const userId = await get_ids(username);
+            if (userId && userId.length > 0 && userId[0].user_Id !== undefined) {
+                const user_id = userId[0].user_Id;
+                con.query(`DELETE FROM likes WHERE likes.user_Id = ? `, [user_id], (error) => {
+                    if (error) {
+                        console.log(error);
+                    }
+                });
+                con.query(`DELETE FROM comments WHERE comments.user_id = ?`, [user_id], (error) => {
+                    if (error) {
+                        console.log(error);
+                    }
+                });
+                con.query(`SELECT post_Id FROM post WHERE user_Id = ? `, [user_id], (error, result) => {
+                    if (error) {
+                        console.log(error);
+                    }
+                    if (result.length > 0) {
+                        const postIdList = result.map(post => post.post_Id);
+                        const posIdPlaceHolders = postIdList.map(() => '?').join(',');
+                        con.query(`DELETE FROM comments WHERE post_Id IN (${posIdPlaceHolders})`, postIdList, (error) => {
+                            if (error) {
+                                console.log(error);
+                            }
+                        });
+                        con.query(`DELETE FROM post WHERE post.user_Id = ? `, [user_id], (error) => {
+                            if (error) {
+                                console.log(error);
+                            }
+                        });
+                    }
+                });
+                con.query(`DELETE FROM follows WHERE follows.user = ? OR follows.following = ? `, [user_id, user_id], (error) => {
+                    if (error) {
+                        console.log(error);
+                    }
+                });
+                setTimeout(() => {
+                    con.query(`DELETE FROM users WHERE username = ? and email = ? `, [username, email], (error, result) => {
+                        if (error) {
+                            console.log(error);
+                        }
+                        if (result.affectedRows > 0) {
+                            resolve('true');
+                        }
+                    });
+                }, 2000);
+            }
+            else {
+                reject("Invelid username");
+            }
+        }
+        catch (error) {
+            console.log(error);
+        }
+    });
+}
 module.exports = {
     createAcc,
     fetchPass,
@@ -648,5 +708,6 @@ module.exports = {
     storeUpdatedcomment,
     deleteStoredComment,
     storeUpdatedUserInfo,
-    storeUpdatedEmail
+    storeUpdatedEmail,
+    removeAcountFromDb
 };

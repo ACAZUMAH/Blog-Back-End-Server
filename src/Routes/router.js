@@ -378,6 +378,23 @@ async function updateEmail(req,res,username){
         res.end(JSON.stringify({"message": error}))
     }
 }
+async function deleteAccount(req,res,username){
+    try {
+        const data = await getPostData(req)
+        const { email, password } = JSON.parse(data)
+        const remove = await dbcontrol.removeAccount(email,password,username)
+        if(remove === 'true'){
+            res.writeHead(200, {"content-type": "application/json"})
+            res.end(JSON.stringify({"message": "Deleted"}))
+        }else{
+            res.writeHead(404,{"content-type": "application/json"})
+            res.end(JSON.stringify({"message": remove}))
+        }
+    } catch (error) {
+        res.writeHead(404,{"content-type": "application/json"})
+        res.end(JSON.stringify({"message": error}))
+    }
+}
 module.exports = { 
     handleAccountCreation,
     returnProfileInfo,
@@ -399,5 +416,6 @@ module.exports = {
     updateComment,
     deleteComment,
     updateprofile,
-    updateEmail
+    updateEmail,
+    deleteAccount
 }

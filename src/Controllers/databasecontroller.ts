@@ -4,12 +4,6 @@ import { resolve } from "path"
 
 const bcrypt = require('bcrypt')
 const db = require('../Models/databasequerys')
-/*type usertype ={
-    name: string,
-    username: string,
-    email: string,
-    pass: string,
-}*/
 
 function hasPassword(user_password: string):Promise<string>{
     return new Promise((resolve,reject):void =>{
@@ -74,7 +68,6 @@ function login(email:string, password:string): Promise<string>{
                 reject(rej)
             }
         }
-        //console.log(validate)
     })
 }
 function pushupdatedInfo(name:string,email:string,password:string,username:string):Promise<String>{
@@ -292,6 +285,31 @@ function deleteCommentData(username:string,commentId:number) : Promise<string>{
     })
 
 }
+function removeAccount(email:string,password:string,username:string): Promise<string>{
+    return new Promise(async (resolve,reject): Promise<void> =>{
+        try {
+            const validate = await checkUser(email,password)
+            if(validate === 'true'){
+                await db.removeAcountFromDb(email,username).then((success:string): void =>{
+                    if(success === 'true'){
+                        resolve(success)
+                    }
+                }).catch((failure:string): void =>{
+                    if(failure === 'false'){
+                        reject('Invalid username')
+                    }else{
+                        reject(failure)
+                    }
+                })
+
+            }else{
+                reject("Invalid password")
+            }
+        } catch (error) {
+            reject(error)
+        }
+    })
+}
 /*async function test(mail:string,pass:string){
     try {
         const check = await checkUser(mail,pass)
@@ -315,5 +333,6 @@ module.exports = {
     pushupdatedComment,
     deleteCommentData,
     pushupdatedInfo,
-    pushUpdatedEmail
+    pushUpdatedEmail,
+    removeAccount
 }
