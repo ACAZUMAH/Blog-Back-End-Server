@@ -140,7 +140,7 @@ This project provides the back-end infrastructure for a blog platform where user
 
 ### Comment Management
   - **Add Comment**:
-    - Endpoint: `POST /blog/comment-on-post?username={username}&post_Id={post_Id}`
+    - Endpoint: `POST /blog/comment-on-post?username={username}&comment_Id={comment_Id}&post_Id={post_Id}`
     - Request Body:
       ```json
       {
