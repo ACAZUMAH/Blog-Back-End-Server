@@ -6,7 +6,7 @@ const con = mysql.createConnection({
     'host': '127.2.2.1',
     'user': 'root',
     'pass': 'Ca059le9b@',
-    'database': 'myblogdb'
+    'database': 'blogdb'
 });
 con.connect((err) => {
     if (err) {

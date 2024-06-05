@@ -4,7 +4,7 @@ const { handlePostRequest,
         handleGetRequest,
         handlePutRequest,
         handlePatchRequest,
-        handleDeleteRequest } = require('./src/Routes/requestHandler')
+        handleDeleteRequest } = require('./dist/Routes/requestHandler')
  
 
 const server = http.createServer(function handlerequest(req,res){

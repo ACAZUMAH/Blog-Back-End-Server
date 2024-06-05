@@ -1,13 +1,13 @@
 const { json } = require('node:stream/consumers')
-const dbcontrol = require('../Controllers/databasecontroller.js')
-const { getPostData } = require('../Controllers/readReqData.js') 
+const dbcontrol = require('../Controllers/databasecontroller')
+const { getPostData } = require('../utils/readReqData') 
 const { Post,
         returnAllPost,
         returnPostbyUsername,
         returnPostComments, 
         allUsers,
         getUserProfile,
-        returnLikes } = require('../Controllers/visualize.js')
+        returnLikes } = require('../Controllers/fetch/visualize')
 const { write } = require('fs')
 const { Console } = require('console')
 
@@ -40,7 +40,7 @@ async function returnProfileInfo(req,res,username){
             res.writeHead(404, {'content-type': 'application/json'})
             res.end(JSON.stringify({'message': 'Profile not found'}))
         }
-    } catch (error) {
+    } catch (error) { 
         console.log(error)
     }
 }
@@ -51,9 +51,14 @@ async function handleLogin(req,res){
         const logRes = await dbcontrol.login(email, password)
         if(logRes === 'success'){
             const redirection = await returnAllPost()
-            res.writeHead(200, {"content-type": "application/json"})
-            res.write(JSON.stringify({"message": "welcome back"}))
-            res.end(JSON.stringify(redirection))
+            if(redirection.length === 0){
+                res.writeHead(404, {"content-type": "application/json"})
+                res.end(JSON.stringify({"message": "welcome back! There are no posts yet, create a post or follow others to view post"}))
+            }else{
+                res.writeHead(200, {"content-type": "application/json"})
+                res.write(JSON.stringify({"message": "welcome back"}))
+                res.end(JSON.stringify(redirection))
+            }
         }else if(logRes === 'failure'){
             res.writeHead(401, {"content-type": "application/json"})
             res.end(JSON.stringify({"message": "password mismatch"}))

@@ -4,13 +4,21 @@
         "allowJs": true,
         "target": "ES2017",
         "module": "CommonJS",
+        "outDir": "dist",
         "rootDir": "./src",
-        "strictNullChecks": true
+        "strictNullChecks": true,
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "forceConsistentCasingInFileNames": true,
+        "baseUrl": ".",
+        "paths": {
+          "@/*": [
+            "src/*"
+          ]
+        }
     },
     "include": [
-        "src/Controllers/*.ts",
-        "src/Models/*.ts"
-, "index.ts", "src/Controllers/databasecontroller.ts", "src/Controllers/visualize.ts", "src/Models/databasequerys.ts"        ],
+        "src/**/*.ts"],
     "exclude": [
         "node_modules"
     ]

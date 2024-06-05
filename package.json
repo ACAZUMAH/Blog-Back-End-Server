@@ -1,7 +1,7 @@
 {
   "name": "blog-poject",
   "version": "1.0.0",
-  "description": "",
+  "description": "This project provides the back-end infrastructure for a blog platform where users can sign up, log in, create posts, like posts, comment on posts, update or delete their posts and comments, follow or unfollow other users, and like or unlike posts.",
   "main": "server.js",
   "scripts": {
     "start": "npm run tsc && node server.js",
@@ -12,9 +12,9 @@
   "license": "ISC",
   "devDependencies": {
     "@tsconfig/node-lts": "^20.1.3",
-    "@types/node": "^20.12.12",
+    "@types/node": "^20.14.1",
     "concurrently": "^7.6.0",
-    "nodemon": "^3.1.0",
+    "nodemon": "^3.1.3",
     "ts-node": "^10.9.2",
     "typescript": "^5.4.5"
   },
@@ -22,5 +22,13 @@
     "bcrypt": "^5.1.1",
     "mysql": "^2.18.1",
     "uuid": "^9.0.1"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ACAZUMAH/Blog-Back-End-Server.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ACAZUMAH/Blog-Back-End-Server/issues"
+  },
+  "homepage": "https://github.com/ACAZUMAH/Blog-Back-End-Server#readme"
 }

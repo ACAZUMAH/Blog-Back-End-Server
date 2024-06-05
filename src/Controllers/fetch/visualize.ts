@@ -1,7 +1,7 @@
 import { rejects } from "assert"
 import { resolve } from "path"
 
-const data = require('../Models/databasequerys')
+const data = require('../../Models/databasequerys')
 
 type general = {
     Id: string 

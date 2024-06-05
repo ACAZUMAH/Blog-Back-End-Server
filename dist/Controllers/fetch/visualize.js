@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const data = require('../Models/databasequerys');
+const data = require('../../Models/databasequerys');
 function sortPostByDate(postArr) {
     postArr.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
     postArr.forEach(post => post.date = new Date(post.date).toString());
